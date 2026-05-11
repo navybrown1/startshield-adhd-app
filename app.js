@@ -192,19 +192,29 @@ function playNotificationSound() {
 
     try {
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        const oscillator = audioCtx.createOscillator();
-        const gainNode = audioCtx.createGain();
+        const now = audioCtx.currentTime;
+        
+        const osc1 = audioCtx.createOscillator();
+        const gain1 = audioCtx.createGain();
+        osc1.type = 'sine';
+        osc1.frequency.value = 880; 
+        osc1.connect(gain1);
+        gain1.connect(audioCtx.destination);
+        gain1.gain.setValueAtTime(0.4, now);
+        gain1.gain.exponentialRampToValueAtTime(0.01, now + 1.5);
+        osc1.start(now);
+        osc1.stop(now + 1.5);
 
-        oscillator.connect(gainNode);
-        gainNode.connect(audioCtx.destination);
-
-        oscillator.frequency.value = 800;
-        oscillator.type = 'sine';
-        gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
-
-        oscillator.start(audioCtx.currentTime);
-        oscillator.stop(audioCtx.currentTime + 0.5);
+        const osc2 = audioCtx.createOscillator();
+        const gain2 = audioCtx.createGain();
+        osc2.type = 'sine';
+        osc2.frequency.value = 1760;
+        osc2.connect(gain2);
+        gain2.connect(audioCtx.destination);
+        gain2.gain.setValueAtTime(0.15, now);
+        gain2.gain.exponentialRampToValueAtTime(0.01, now + 0.8);
+        osc2.start(now);
+        osc2.stop(now + 0.8);
     } catch (error) {
         console.log('Audio not supported or blocked', error);
     }
@@ -232,6 +242,7 @@ function sendDesktopNotification(title, body) {
 function switchMode() {
     isBreak = !isBreak;
     resetTimer();
+    document.body.classList.remove('zen-mode');
 
     timerDisplay.classList.toggle('break-mode', isBreak);
     document.querySelector('.timer-wrapper').classList.toggle('break-mode', isBreak);
@@ -341,7 +352,12 @@ function startTimer() {
         clearInterval(timer);
         timer = null;
         updateStartButtonLabel();
+        document.body.classList.remove('zen-mode');
         return;
+    }
+
+    if (!isBreak) {
+        document.body.classList.add('zen-mode');
     }
 
     timer = setInterval(async () => {
@@ -355,6 +371,7 @@ function startTimer() {
         timer = null;
         updateStartButtonLabel();
         playNotificationSound();
+        document.body.classList.remove('zen-mode');
 
         if (isBreak) {
             sendDesktopNotification('Break Over!', 'Time to get back to focus.');
@@ -371,6 +388,7 @@ function startTimer() {
 
 function reset() {
     resetTimer();
+    document.body.classList.remove('zen-mode');
 
     if (isBreak) {
         const breakMinutes = (sessionCount > 0 && sessionCount % 4 === 0) ? 15 : 5;

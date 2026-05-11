@@ -12,8 +12,8 @@ function getUserDataPath() {
 
 function createWindow() {
   mainWindow = new BrowserWindow({
-    width: 450,
-    height: 800,
+    width: 700,
+    height: 850,
     minWidth: 400,
     minHeight: 650,
     webPreferences: {
