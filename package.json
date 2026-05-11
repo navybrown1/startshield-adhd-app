@@ -1,0 +1,24 @@
+{
+  "name": "startshield-adhd-app",
+  "version": "1.0.0",
+  "description": "A desktop ADHD focus timer application",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron .",
+    "build": "electron-builder"
+  },
+  "keywords": [
+    "adhd",
+    "focus",
+    "timer",
+    "pomodoro",
+    "productivity"
+  ],
+  "author": "Edwin Brown",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^28.0.0",
+    "electron-builder": "^24.0.0"
+  }
+}

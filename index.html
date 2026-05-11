@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Content Security Policy to allow Electron execution safely -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self';">
+    <title>StartShield ADHD App</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="title-bar-drag-area"></div>
+    <div class="container">
+        <header>
+            <h1>StartShield</h1>
+            <p>Your Focus Guardian</p>
+        </header>
+        
+        <section id="timer-section">
+            <div class="timer-wrapper">
+                <svg id="progress-ring" class="progress-ring" viewBox="0 0 100 100">
+                    <circle class="progress-ring-circle-bg" cx="50" cy="50" r="45"/>
+                    <circle class="progress-circle" cx="50" cy="50" r="45"/>
+                </svg>
+                <div id="timer-display">25:00</div>
+            </div>
+            
+            <div class="mode-indicator">
+                <span id="mode-label">Focus Mode</span>
+            </div>
+            
+            <div class="controls">
+                <button id="start-btn">Start</button>
+                <button id="reset-btn">Reset</button>
+            </div>
+            
+            <div class="mode-toggle-wrapper">
+                <button id="mode-toggle" class="secondary-btn">Switch to Break</button>
+            </div>
+        </section>
+        
+        <div class="bottom-sections">
+            <section id="duration-section">
+                <h3 class="section-header">Focus Presets</h3>
+                <div class="preset-group">
+                    <button class="preset-btn" data-minutes="15">15m</button>
+                    <button class="preset-btn active" data-minutes="25">25m</button>
+                    <button class="preset-btn" data-minutes="50">50m</button>
+                </div>
+            </section>
+            
+            <section id="task-section">
+                <h3 class="section-header">Current Task</h3>
+                <div class="task-input-wrapper">
+                    <input type="text" id="task-input" placeholder="What are you focusing on?">
+                    <button id="set-task-btn">Set</button>
+                </div>
+                <p id="active-task-display"></p>
+            </section>
+
+            <section id="stats-section">
+                <span class="stats-label">Sessions Completed</span>
+                <span id="session-count" class="stats-value">0</span>
+            </section>
+        </div>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
