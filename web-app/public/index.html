@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src https://api.mistral.ai;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self' https://api.mistral.ai; media-src https://cdn.pixabay.com;">
     <title>StartShield - AI Focus Guardian</title>
     <link rel="stylesheet" href="styles.css">
 </head>
@@ -22,7 +22,7 @@
                     <label for="api-key-input">Mistral API Key</label>
                     <input type="password" id="api-key-input" placeholder="Enter your Mistral API key">
                     <button type="button" class="save-btn" onclick="saveApiKey()">Save API Key</button>
-                    <p class="setting-hint">Get your key from console.mistral.ai. Saved only on this device.</p>
+                    <p class="setting-hint">In web mode, this key is available only for the current page session and is not saved in browser storage.</p>
                 </div>
                 
                 <div class="setting-group">
