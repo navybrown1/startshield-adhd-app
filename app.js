@@ -92,6 +92,21 @@ function saveLocalStats(stats) {
     localStorage.setItem(STORAGE_KEYS.stats, JSON.stringify(stats));
 }
 
+function cleanAiText(text) {
+    return String(text || '')
+        .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '$1')
+        .replace(/`{1,3}([^`]+)`{1,3}/g, '$1')
+        .replace(/\*\*([^*]+)\*\*/g, '$1')
+        .replace(/__([^_]+)__/g, '$1')
+        .replace(/\*([^*]+)\*/g, '$1')
+        .replace(/_([^_]+)_/g, '$1')
+        .replace(/^#{1,6}\s+/gm, '')
+        .replace(/^\s*>\s?/gm, '')
+        .replace(/^\s*[-*+]\s+/gm, '• ')
+        .replace(/\n{3,}/g, '\n\n')
+        .trim();
+}
+
 function updateDisplay() {
     const minutes = Math.floor(timeLeft / 60);
     const seconds = timeLeft % 60;
@@ -479,7 +494,7 @@ function appendChatMessage(text, type = 'ai') {
     message.className = `message ${type}-message`;
 
     const paragraph = document.createElement('p');
-    paragraph.textContent = text;
+    paragraph.textContent = type === 'user' ? text : cleanAiText(text);
     message.appendChild(paragraph);
     chatMessages.appendChild(message);
     chatMessages.scrollTop = chatMessages.scrollHeight;
@@ -508,10 +523,10 @@ async function sendChatMessage() {
     try {
         const reply = await askMistral(message);
         loadingMessage.className = 'message ai-message';
-        loadingMessage.querySelector('p').textContent = reply;
+        loadingMessage.querySelector('p').textContent = cleanAiText(reply);
     } catch (error) {
         loadingMessage.className = 'message ai-error';
-        loadingMessage.querySelector('p').textContent = error.message;
+        loadingMessage.querySelector('p').textContent = cleanAiText(error.message);
     }
 }
 
@@ -527,7 +542,7 @@ async function getAiSuggestion() {
         suggestionBox.innerHTML = '';
 
         const paragraph = document.createElement('p');
-        paragraph.textContent = reply;
+        paragraph.textContent = cleanAiText(reply);
 
         const button = document.createElement('button');
         button.className = 'ask-ai-btn';
@@ -540,7 +555,7 @@ async function getAiSuggestion() {
         suggestionBox.innerHTML = '';
 
         const paragraph = document.createElement('p');
-        paragraph.textContent = error.message;
+        paragraph.textContent = cleanAiText(error.message);
 
         const button = document.createElement('button');
         button.className = 'ask-ai-btn';
@@ -570,7 +585,7 @@ async function askMistral(userMessage) {
             messages: [
                 {
                     role: 'system',
-                    content: 'You are a concise, encouraging focus coach. Give practical ADHD-friendly advice without long lectures.'
+                    content: 'You are a concise, encouraging focus coach. Give practical ADHD-friendly advice in plain text only. Do not use Markdown, asterisks, bold syntax, headings, code formatting, or bullet markers.'
                 },
                 {
                     role: 'user',
@@ -587,7 +602,7 @@ async function askMistral(userMessage) {
     }
 
     const data = await response.json();
-    return data.choices?.[0]?.message?.content?.trim() || 'I could not generate a response.';
+    return cleanAiText(data.choices?.[0]?.message?.content || 'I could not generate a response.');
 }
 
 presetBtns.forEach((btn) => {
