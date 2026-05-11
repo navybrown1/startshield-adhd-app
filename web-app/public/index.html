@@ -11,22 +11,22 @@
     <div class="title-bar-drag-area"></div>
     
     <!-- Settings Modal -->
-    <div id="settings-modal" class="modal hidden">
-        <div class="modal-content">
+    <div id="settings-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="settings-modal-title" aria-hidden="true">
+        <div class="modal-content" tabindex="-1">
             <div class="modal-header">
-                <h2>⚙️ Settings</h2>
-                <button class="close-btn" onclick="closeModal('settings-modal')">&times;</button>
+                <h2 id="settings-modal-title">⚙️ Settings</h2>
+                <button type="button" class="close-btn" aria-label="Close settings" onclick="closeModal('settings-modal')">&times;</button>
             </div>
             <div class="modal-body">
                 <div class="setting-group">
-                    <label>Mistral API Key</label>
+                    <label for="api-key-input">Mistral API Key</label>
                     <input type="password" id="api-key-input" placeholder="Enter your Mistral API key">
-                    <button class="save-btn" onclick="saveApiKey()">Save API Key</button>
-                    <p class="setting-hint">Get your key from console.mistral.ai</p>
+                    <button type="button" class="save-btn" onclick="saveApiKey()">Save API Key</button>
+                    <p class="setting-hint">Get your key from console.mistral.ai. Saved only on this device.</p>
                 </div>
                 
                 <div class="setting-group">
-                    <label>Theme</label>
+                    <label for="theme-select">Theme</label>
                     <select id="theme-select" onchange="changeTheme(this.value)">
                         <option value="dark">🌙 Dark</option>
                         <option value="light">☀️ Light</option>
@@ -36,7 +36,7 @@
                 </div>
                 
                 <div class="setting-group">
-                    <label>Ambient Sound</label>
+                    <label for="ambient-sound">Ambient Sound</label>
                     <select id="ambient-sound" onchange="changeAmbientSound(this.value)">
                         <option value="none">Silence</option>
                         <option value="rain">🌧️ Rain</option>
@@ -52,41 +52,41 @@
                     <label>Notifications</label>
                     <label class="toggle-label">
                         <input type="checkbox" id="notifications-toggle" checked>
-                        <span class="toggle-slider"></span>
                         Enable Notifications
                     </label>
                 </div>
+                <p class="setting-hint">Theme, sound, and notification preferences save automatically.</p>
             </div>
         </div>
     </div>
     
     <!-- AI Coach Modal -->
-    <div id="ai-coach-modal" class="modal hidden">
-        <div class="modal-content ai-coach-content">
+    <div id="ai-coach-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="ai-modal-title" aria-hidden="true">
+        <div class="modal-content ai-coach-content" tabindex="-1">
             <div class="modal-header">
-                <h2>🤖 AI Focus Coach</h2>
-                <button class="close-btn" onclick="closeModal('ai-coach-modal')">&times;</button>
+                <h2 id="ai-modal-title">🤖 AI Focus Coach</h2>
+                <button type="button" class="close-btn" aria-label="Close AI coach" onclick="closeModal('ai-coach-modal')">&times;</button>
             </div>
             <div class="modal-body ai-chat-body">
-                <div id="chat-messages" class="chat-messages">
+                <div id="chat-messages" class="chat-messages" aria-live="polite">
                     <div class="message ai-message">
                         <p>Hey! I'm your AI Focus Coach. I'm here to help you stay productive and motivated. How can I help you today?</p>
                     </div>
                 </div>
                 <div class="chat-input-container">
-                    <input type="text" id="chat-input" placeholder="Ask me anything about focus..." onkeypress="handleChatKey(event)">
-                    <button onclick="sendChatMessage()" id="send-btn">Send</button>
+                    <input type="text" id="chat-input" placeholder="Ask me anything about focus..." aria-label="Message AI coach" onkeypress="handleChatKey(event)">
+                    <button type="button" onclick="sendChatMessage()" id="send-btn">Send</button>
                 </div>
             </div>
         </div>
     </div>
     
     <!-- Stats Modal -->
-    <div id="stats-modal" class="modal hidden">
-        <div class="modal-content">
+    <div id="stats-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="stats-modal-title" aria-hidden="true">
+        <div class="modal-content" tabindex="-1">
             <div class="modal-header">
-                <h2>📊 Your Progress</h2>
-                <button class="close-btn" onclick="closeModal('stats-modal')">&times;</button>
+                <h2 id="stats-modal-title">📊 Your Progress</h2>
+                <button type="button" class="close-btn" aria-label="Close progress modal" onclick="closeModal('stats-modal')">&times;</button>
             </div>
             <div class="modal-body stats-body">
                 <div class="stats-grid">
@@ -130,16 +130,20 @@
         </div>
     </div>
     
-    <div class="container">
+    <div class="container" role="main">
         <header>
             <div class="header-top">
                 <h1>StartShield</h1>
                 <div class="header-actions">
-                    <button class="icon-btn" onclick="openModal('stats-modal')" title="View Stats">📊</button>
-                    <button class="icon-btn" onclick="openModal('settings-modal')" title="Settings">⚙️</button>
+                    <button type="button" class="icon-btn" aria-label="View stats" aria-haspopup="dialog" aria-controls="stats-modal" onclick="openModal('stats-modal')" title="View Stats">📊</button>
+                    <button type="button" class="icon-btn" aria-label="Open settings" aria-haspopup="dialog" aria-controls="settings-modal" onclick="openModal('settings-modal')" title="Settings">⚙️</button>
                 </div>
             </div>
             <p>Your AI-Powered Focus Guardian</p>
+            <div id="onboarding-card" class="onboarding-card hidden" role="note">
+                <p><strong>Quick start:</strong> Add a task, press <em>Start Focus</em>, then open ⚙️ to save your AI key and preferences.</p>
+                <button type="button" id="dismiss-onboarding" class="secondary-btn">Got it</button>
+            </div>
             <div class="quick-stats">
                 <span class="quick-stat">🔥 <span id="quick-streak">0</span> day streak</span>
                 <span class="quick-stat">⭐ Level <span id="quick-level">1</span></span>
@@ -152,7 +156,7 @@
                     <circle class="progress-ring-circle-bg" cx="50" cy="50" r="45"/>
                     <circle class="progress-circle" cx="50" cy="50" r="45"/>
                 </svg>
-                <div id="timer-display">25:00</div>
+                <div id="timer-display" role="timer" aria-live="polite" aria-atomic="true">25:00</div>
                 <div id="focus-task-overlay" class="focus-task-overlay hidden"></div>
             </div>
             
@@ -161,40 +165,41 @@
             </div>
             
             <div class="controls">
-                <button id="start-btn">Start</button>
-                <button id="reset-btn">Reset</button>
+                <button type="button" id="start-btn">Start Focus</button>
+                <button type="button" id="reset-btn">Reset</button>
             </div>
             
             <div class="mode-toggle-wrapper">
-                <button id="mode-toggle" class="secondary-btn">Switch to Break</button>
+                <button type="button" id="mode-toggle" class="secondary-btn">Switch to Break</button>
             </div>
         </section>
         
         <div class="bottom-sections">
-            <section id="duration-section">
-                <h3 class="section-header">Focus Presets</h3>
-                <div class="preset-group">
-                    <button class="preset-btn" data-minutes="15">15m</button>
-                    <button class="preset-btn active" data-minutes="25">25m</button>
-                    <button class="preset-btn" data-minutes="50">50m</button>
-                    <button class="preset-btn" data-minutes="90">90m</button>
-                </div>
-            </section>
-            
             <section id="task-section">
                 <h3 class="section-header">Current Task</h3>
                 <div class="task-input-wrapper">
-                    <input type="text" id="task-input" placeholder="What are you focusing on?">
-                    <button id="set-task-btn">Set</button>
+                    <input type="text" id="task-input" placeholder="What are you focusing on?" aria-label="Current focus task">
+                    <button type="button" id="set-task-btn">Save</button>
                 </div>
-                <p id="active-task-display"></p>
+                <p class="setting-hint">Task saves automatically when you press Enter or start the timer.</p>
+                <p id="active-task-display" aria-live="polite"></p>
+            </section>
+
+            <section id="duration-section">
+                <h3 class="section-header">Focus Presets</h3>
+                <div class="preset-group">
+                    <button type="button" class="preset-btn" data-minutes="15">15m</button>
+                    <button type="button" class="preset-btn active" data-minutes="25">25m</button>
+                    <button type="button" class="preset-btn" data-minutes="50">50m</button>
+                    <button type="button" class="preset-btn" data-minutes="90">90m</button>
+                </div>
             </section>
             
             <section id="ai-suggestion-section">
                 <h3 class="section-header">💡 AI Suggestion</h3>
                 <div id="ai-suggestion" class="ai-suggestion-box">
                     <p>Click "Ask AI" for personalized focus tips!</p>
-                    <button class="ask-ai-btn" onclick="getAiSuggestion()">Ask AI Coach</button>
+                    <button type="button" class="ask-ai-btn" onclick="getAiSuggestion()">Ask AI Coach</button>
                 </div>
             </section>
 
@@ -215,6 +220,7 @@
             </div>
         </div>
     </div>
+    <div id="app-toast" class="app-toast hidden" role="status" aria-live="polite" aria-atomic="true"></div>
     
     <script src="app.js"></script>
 </body>
