@@ -6,7 +6,7 @@ let sessionCount = getIntFromStorage('sessionCount', 0);
 let currentStreak = getIntFromStorage('currentStreak', 0);
 let xpPoints = getIntFromStorage('xpPoints', 0);
 let userLevel = getIntFromStorage('userLevel', 1);
-let badges = JSON.parse(localStorage.getItem('badges') || '[]');
+let badges = getJsonFromStorage('badges', []);
 let ambientAudio = null;
 let activeModalId = null;
 let restoreFocusElement = null;
@@ -16,14 +16,46 @@ let sessionApiKey = '';
 
 const FOCUSABLE_SELECTOR = 'button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), a[href], [tabindex]:not([tabindex="-1"])';
 const DEFAULT_TOAST_DURATION = 2600;
+const LONG_TOAST_DURATION = 3600;
+const LEVEL_TOAST_DURATION = 3200;
 const STORAGE = {
     onboardingDismissed: 'startshieldOnboardingDismissed'
 };
 
+function getStorageValue(key, fallback = '') {
+    try {
+        const value = localStorage.getItem(key);
+        return value === null ? fallback : value;
+    } catch (error) {
+        console.error(`Unable to read ${key} from local storage:`, error);
+        return fallback;
+    }
+}
+
+function setStorageValue(key, value) {
+    try {
+        localStorage.setItem(key, String(value));
+        return true;
+    } catch (error) {
+        console.error(`Unable to save ${key} to local storage:`, error);
+        showToast('Could not save locally. Please check browser storage settings.', LONG_TOAST_DURATION);
+        return false;
+    }
+}
+
 function getIntFromStorage(key, fallback) {
-    const raw = localStorage.getItem(key);
-    const parsed = parseInt(raw || String(fallback), 10);
+    const parsed = parseInt(getStorageValue(key, String(fallback)), 10);
     return Number.isNaN(parsed) ? fallback : parsed;
+}
+
+function getJsonFromStorage(key, fallback) {
+    try {
+        const raw = getStorageValue(key, '');
+        return raw ? JSON.parse(raw) : fallback;
+    } catch (error) {
+        console.error(`Unable to parse ${key} from local storage:`, error);
+        return fallback;
+    }
 }
 
 const timerDisplay = document.getElementById('timer-display');
@@ -60,14 +92,14 @@ function showToast(message, duration = DEFAULT_TOAST_DURATION) {
 
 function updateOnboardingState() {
     if (!onboardingCard) return;
-    const dismissed = localStorage.getItem(STORAGE.onboardingDismissed) === 'true';
+    const dismissed = getStorageValue(STORAGE.onboardingDismissed, 'false') === 'true';
     onboardingCard.classList.toggle('hidden', dismissed || sessionCount > 0);
 }
 
 function saveTask(task, options = {}) {
     const trimmedTask = (task || '').trim();
     if (!trimmedTask) return false;
-    localStorage.setItem('currentTask', trimmedTask);
+    if (!setStorageValue('currentTask', trimmedTask)) return false;
     activeTaskDisplay.textContent = `Current Focus: ${trimmedTask}`;
     if (focusTaskOverlay) {
         focusTaskOverlay.textContent = trimmedTask;
@@ -124,7 +156,13 @@ function playNotificationSound() {
     }
 }
 
+function notificationsAreEnabled() {
+    return getStorageValue('notificationsEnabled', 'true') !== 'false';
+}
+
 function sendDesktopNotification(title, body) {
+    if (!notificationsAreEnabled() || typeof Notification === 'undefined') return;
+
     if (Notification.permission === 'granted') {
         new Notification(title, { body });
     } else if (Notification.permission !== 'denied') {
@@ -144,8 +182,8 @@ function addXP(amount) {
         xpPoints -= xpForNextLevel;
         showLevelUpNotification(userLevel);
     }
-    localStorage.setItem('xpPoints', xpPoints);
-    localStorage.setItem('userLevel', userLevel);
+    setStorageValue('xpPoints', xpPoints);
+    setStorageValue('userLevel', userLevel);
     updateStatsDisplay();
     updateQuickStats();
 }
@@ -160,7 +198,7 @@ function checkBadges() {
 
     if (newBadges.length > 0) {
         badges.push(...newBadges.map((badge) => badge.id));
-        localStorage.setItem('badges', JSON.stringify(badges));
+        setStorageValue('badges', JSON.stringify(badges));
         showBadgeNotification(newBadges[0]);
         updateStatsDisplay();
     }
@@ -169,6 +207,7 @@ function checkBadges() {
 function showBadgeNotification(badge) {
     const notification = document.getElementById('badge-notification');
     const badgeName = document.getElementById('badge-name');
+    if (!notification || !badgeName) return;
     badgeName.textContent = `${badge.icon} ${badge.name}`;
     notification.classList.remove('hidden');
     showToast(`New badge unlocked: ${badge.name}`);
@@ -176,7 +215,7 @@ function showBadgeNotification(badge) {
 }
 
 function showLevelUpNotification(level) {
-    showToast(`🎉 Level up! You are now level ${level}.`, 3200);
+    showToast(`🎉 Level up! You are now level ${level}.`, LEVEL_TOAST_DURATION);
 }
 
 function updateStatsDisplay() {
@@ -186,13 +225,13 @@ function updateStatsDisplay() {
     document.getElementById('total-sessions-display').textContent = sessionCount;
 
     const xpForNextLevel = userLevel * 500;
-    const progress = (xpPoints / xpForNextLevel) * 100;
+    const progress = Math.max(0, Math.min(100, (xpPoints / xpForNextLevel) * 100));
     document.getElementById('level-progress').style.width = `${progress}%`;
     document.getElementById('level-progress-text').textContent = `${xpPoints}/${xpForNextLevel} XP to next level`;
 
     const badgesContainer = document.getElementById('badges-container');
     if (badges.length === 0) {
-        badgesContainer.innerHTML = '<p class="no-badges">Complete sessions to earn badges!</p>';
+        badgesContainer.replaceChildren(createTextElement('p', 'no-badges', 'Complete sessions to earn badges!'));
         return;
     }
 
@@ -204,12 +243,25 @@ function updateStatsDisplay() {
         { id: 'month-master', name: 'Month Master', icon: '🏆' }
     ];
 
-    badgesContainer.innerHTML = '<div class="badges-grid">' +
-        allBadges
-            .filter((badge) => badges.includes(badge.id))
-            .map((badge) => `<div class="badge-item" title="${badge.name}">${badge.icon}</div>`)
-            .join('') +
-        '</div>';
+    const grid = document.createElement('div');
+    grid.className = 'badges-grid';
+    allBadges
+        .filter((badge) => badges.includes(badge.id))
+        .forEach((badge) => {
+            const badgeItem = document.createElement('div');
+            badgeItem.className = 'badge-item';
+            badgeItem.title = badge.name;
+            badgeItem.textContent = badge.icon;
+            grid.appendChild(badgeItem);
+        });
+    badgesContainer.replaceChildren(grid);
+}
+
+function createTextElement(tagName, className, text) {
+    const element = document.createElement(tagName);
+    if (className) element.className = className;
+    element.textContent = text;
+    return element;
 }
 
 function updateQuickStats() {
@@ -249,7 +301,7 @@ function resetTimer() {
 }
 
 function startTimer() {
-    if (Notification.permission === 'default') {
+    if (typeof Notification !== 'undefined' && Notification.permission === 'default' && notificationsAreEnabled()) {
         Notification.requestPermission();
     }
 
@@ -282,18 +334,18 @@ function startTimer() {
 
         sendDesktopNotification('Focus Complete!', 'Great job! Time for a break.');
         sessionCount += 1;
-        localStorage.setItem('sessionCount', sessionCount);
+        setStorageValue('sessionCount', sessionCount);
         sessionCountDisplay.textContent = sessionCount;
         updateOnboardingState();
 
-        const lastSession = localStorage.getItem('lastSessionDate');
+        const lastSession = getStorageValue('lastSessionDate', '');
         const today = new Date().toDateString();
         if (lastSession !== today) {
             const yesterday = new Date();
             yesterday.setDate(yesterday.getDate() - 1);
             currentStreak = lastSession === yesterday.toDateString() ? currentStreak + 1 : 1;
-            localStorage.setItem('currentStreak', currentStreak);
-            localStorage.setItem('lastSessionDate', today);
+            setStorageValue('currentStreak', currentStreak);
+            setStorageValue('lastSessionDate', today);
         }
 
         addXP(50);
@@ -355,7 +407,7 @@ taskInput.addEventListener('blur', () => {
     saveTask(taskInput.value, { silent: true });
 });
 
-const savedTask = localStorage.getItem('currentTask');
+const savedTask = getStorageValue('currentTask', '');
 if (savedTask) {
     activeTaskDisplay.textContent = `Current Focus: ${savedTask}`;
     if (focusTaskOverlay) {
@@ -418,10 +470,10 @@ function trapModalFocus(event) {
 }
 
 function hydrateSettings() {
-    const savedTheme = localStorage.getItem('theme') || 'dark';
-    const savedSound = localStorage.getItem('ambientSound') || 'none';
-    const savedVolume = localStorage.getItem('ambientVolume') || '50';
-    const notificationsEnabled = localStorage.getItem('notificationsEnabled') !== 'false';
+    const savedTheme = getStorageValue('theme', 'dark');
+    const savedSound = getStorageValue('ambientSound', 'none');
+    const savedVolume = getStorageValue('ambientVolume', '50');
+    const notificationsEnabled = notificationsAreEnabled();
 
     document.getElementById('theme-select').value = savedTheme;
     document.getElementById('ambient-sound').value = savedSound;
@@ -435,7 +487,7 @@ function saveApiKey() {
     const input = document.getElementById('api-key-input');
     const key = input.value.trim();
     if (key && (key.length < 16 || /\s/.test(key))) {
-        showToast('This API key format looks invalid. Please check and try again.', 3600);
+        showToast('This API key format looks invalid. Please check and try again.', LONG_TOAST_DURATION);
         return;
     }
     sessionApiKey = key;
@@ -444,12 +496,12 @@ function saveApiKey() {
 
 function changeTheme(theme) {
     document.body.className = `theme-${theme}`;
-    localStorage.setItem('theme', theme);
+    setStorageValue('theme', theme);
     showToast(`Theme set to ${theme}.`);
 }
 
 function loadTheme() {
-    const savedTheme = localStorage.getItem('theme') || 'dark';
+    const savedTheme = getStorageValue('theme', 'dark');
     document.body.className = `theme-${savedTheme}`;
     document.getElementById('theme-select').value = savedTheme;
 }
@@ -473,19 +525,19 @@ function changeAmbientSound(sound) {
         ambientAudio.play().catch((error) => console.log('Audio autoplay blocked:', error));
     }
 
-    localStorage.setItem('ambientSound', sound);
+    setStorageValue('ambientSound', sound);
     showToast(sound === 'none' ? 'Ambient sound turned off.' : `Ambient sound set to ${sound}.`);
 }
 
 function changeVolume(value) {
     document.getElementById('volume-display').textContent = `${value}%`;
     if (ambientAudio) ambientAudio.volume = value / 100;
-    localStorage.setItem('ambientVolume', value);
+    setStorageValue('ambientVolume', value);
 }
 
 function loadAmbientSound() {
-    const savedSound = localStorage.getItem('ambientSound') || 'none';
-    const savedVolume = localStorage.getItem('ambientVolume') || '50';
+    const savedSound = getStorageValue('ambientSound', 'none');
+    const savedVolume = getStorageValue('ambientVolume', '50');
     document.getElementById('ambient-sound').value = savedSound;
     document.getElementById('ambient-volume').value = savedVolume;
     document.getElementById('volume-display').textContent = `${savedVolume}%`;
@@ -508,7 +560,7 @@ async function sendChatMessage() {
             body: JSON.stringify({
                 message,
                 context: {
-                    task: localStorage.getItem('currentTask') || '',
+                    task: getStorageValue('currentTask', ''),
                     sessionCount,
                     streak: currentStreak
                 }
@@ -518,7 +570,7 @@ async function sendChatMessage() {
         removeMessageFromChat(loadingId);
         if (!response.ok) throw new Error('API request failed');
         const data = await response.json();
-        addMessageToChat('ai', data.response);
+        addMessageToChat('ai', data.response || 'No response received.');
     } catch (error) {
         removeMessageFromChat(loadingId);
         addMessageToChat('ai', 'Could not reach the AI coach. Try again in a moment.');
@@ -529,11 +581,13 @@ async function sendChatMessage() {
 
 function addMessageToChat(role, content, isLoading = false) {
     const messagesContainer = document.getElementById('chat-messages');
-    const messageId = `msg-${Date.now()}`;
+    const messageId = `msg-${Date.now()}-${Math.random().toString(36).slice(2)}`;
     const messageDiv = document.createElement('div');
     messageDiv.className = `message ${role}-message${isLoading ? ' loading' : ''}`;
     messageDiv.id = messageId;
-    messageDiv.innerHTML = `<p>${content}</p>`;
+    const paragraph = document.createElement('p');
+    paragraph.textContent = String(content || '');
+    messageDiv.appendChild(paragraph);
     messagesContainer.appendChild(messageDiv);
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
     return messageId;
@@ -548,9 +602,20 @@ function handleChatKey(event) {
     if (event.key === 'Enter') sendChatMessage();
 }
 
-async function getAiSuggestion() {
+function renderSuggestionBox(text, buttonText) {
     const suggestionBox = document.getElementById('ai-suggestion');
-    suggestionBox.innerHTML = '<p>Getting a fresh suggestion...</p>';
+    suggestionBox.replaceChildren();
+    suggestionBox.appendChild(createTextElement('p', '', text));
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'ask-ai-btn';
+    button.textContent = buttonText;
+    button.addEventListener('click', getAiSuggestion);
+    suggestionBox.appendChild(button);
+}
+
+async function getAiSuggestion() {
+    renderSuggestionBox('Getting a fresh suggestion...', 'Working');
     try {
         const hour = new Date().getHours();
         const timeOfDay = hour < 12 ? 'morning' : hour < 17 ? 'afternoon' : 'evening';
@@ -559,7 +624,7 @@ async function getAiSuggestion() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 context: {
-                    task: localStorage.getItem('currentTask') || '',
+                    task: getStorageValue('currentTask', ''),
                     timeOfDay
                 }
             })
@@ -567,9 +632,9 @@ async function getAiSuggestion() {
 
         if (!response.ok) throw new Error('API request failed');
         const data = await response.json();
-        suggestionBox.innerHTML = `<p>${data.suggestion}</p><button type="button" class="ask-ai-btn" onclick="getAiSuggestion()">Ask Again</button>`;
+        renderSuggestionBox(data.suggestion || 'No suggestion received.', 'Ask Again');
     } catch (error) {
-        suggestionBox.innerHTML = '<p>Could not get a suggestion right now. Try again in a moment.</p><button type="button" class="ask-ai-btn" onclick="getAiSuggestion()">Try Again</button>';
+        renderSuggestionBox('Could not get a suggestion right now. Try again in a moment.', 'Try Again');
         showToast('Suggestion service is currently unavailable.');
         console.error('Suggestion error:', error);
     }
@@ -601,14 +666,14 @@ document.querySelectorAll('.modal').forEach((modal) => {
 const notificationsToggle = document.getElementById('notifications-toggle');
 if (notificationsToggle) {
     notificationsToggle.addEventListener('change', (event) => {
-        localStorage.setItem('notificationsEnabled', event.target.checked ? 'true' : 'false');
+        setStorageValue('notificationsEnabled', event.target.checked ? 'true' : 'false');
         showToast(event.target.checked ? 'Notifications enabled.' : 'Notifications disabled.');
     });
 }
 
 if (dismissOnboardingBtn) {
     dismissOnboardingBtn.addEventListener('click', () => {
-        localStorage.setItem(STORAGE.onboardingDismissed, 'true');
+        setStorageValue(STORAGE.onboardingDismissed, 'true');
         updateOnboardingState();
     });
 }
