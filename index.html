@@ -3,19 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src https://api.mistral.ai;">
-    <title>StartShield - AI Focus Guardian</title>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; script-src 'self' 'unsafe-inline'; connect-src https://api.mistral.ai;">
+    <title>StartShield - Cyber Zen</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body class="theme-dark">
+    <!-- Atmospheric Background (Cyber-Zen Aurora) -->
+    <div class="ambient-bg">
+        <div class="aurora-1"></div>
+        <div class="aurora-2"></div>
+        <div class="glass-blur-overlay"></div>
+    </div>
+
     <div class="title-bar-drag-area"></div>
     
     <!-- Settings Modal -->
     <div id="settings-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="settings-modal-title" aria-hidden="true">
         <div class="modal-content" tabindex="-1">
             <div class="modal-header">
-                <h2 id="settings-modal-title">⚙️ Settings</h2>
-                <button type="button" class="close-btn" aria-label="Close settings" onclick="closeModal('settings-modal')">&times;</button>
+                <h2 id="settings-modal-title"><span class="material-symbols-outlined">settings</span> Settings</h2>
+                <button type="button" class="close-btn material-symbols-outlined" aria-label="Close settings" onclick="closeModal('settings-modal')">close</button>
             </div>
             <div class="modal-body">
                 <div class="setting-group">
@@ -28,10 +35,8 @@
                 <div class="setting-group">
                     <label for="theme-select">Theme</label>
                     <select id="theme-select" onchange="changeTheme(this.value)">
-                        <option value="dark">🌙 Dark</option>
+                        <option value="dark">🌙 Dark (Cyber-Zen)</option>
                         <option value="light">☀️ Light</option>
-                        <option value="ocean">🌊 Ocean</option>
-                        <option value="forest">🌲 Forest</option>
                     </select>
                 </div>
                 
@@ -40,12 +45,10 @@
                     <select id="ambient-sound" onchange="changeAmbientSound(this.value)">
                         <option value="none">Silence</option>
                         <option value="rain">🌧️ Rain</option>
-                        <option value="cafe">☕ Café</option>
                         <option value="white-noise">📻 White Noise</option>
-                        <option value="forest">🌳 Forest</option>
                     </select>
                     <input type="range" id="ambient-volume" min="0" max="100" value="50" onchange="changeVolume(this.value)">
-                    <span id="volume-display">50%</span>
+                    <span id="volume-display" class="setting-hint">50%</span>
                 </div>
                 
                 <div class="setting-group">
@@ -55,7 +58,6 @@
                         Enable Notifications
                     </label>
                 </div>
-                <p class="setting-hint">Theme, sound, and notification preferences save automatically.</p>
             </div>
         </div>
     </div>
@@ -64,8 +66,8 @@
     <div id="ai-coach-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="ai-modal-title" aria-hidden="true">
         <div class="modal-content ai-coach-content" tabindex="-1">
             <div class="modal-header">
-                <h2 id="ai-modal-title">🤖 AI Focus Coach</h2>
-                <button type="button" class="close-btn" aria-label="Close AI coach" onclick="closeModal('ai-coach-modal')">&times;</button>
+                <h2 id="ai-modal-title"><span class="material-symbols-outlined">smart_toy</span> AI Focus Coach</h2>
+                <button type="button" class="close-btn material-symbols-outlined" aria-label="Close AI coach" onclick="closeModal('ai-coach-modal')">close</button>
             </div>
             <div class="modal-body ai-chat-body">
                 <div id="chat-messages" class="chat-messages" aria-live="polite">
@@ -85,28 +87,28 @@
     <div id="stats-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="stats-modal-title" aria-hidden="true">
         <div class="modal-content" tabindex="-1">
             <div class="modal-header">
-                <h2 id="stats-modal-title">📊 Your Progress</h2>
-                <button type="button" class="close-btn" aria-label="Close progress modal" onclick="closeModal('stats-modal')">&times;</button>
+                <h2 id="stats-modal-title"><span class="material-symbols-outlined">insights</span> Your Progress</h2>
+                <button type="button" class="close-btn material-symbols-outlined" aria-label="Close progress modal" onclick="closeModal('stats-modal')">close</button>
             </div>
             <div class="modal-body stats-body">
                 <div class="stats-grid">
                     <div class="stat-card">
-                        <div class="stat-icon">🔥</div>
+                        <div class="stat-icon material-symbols-outlined text-accent-purple">local_fire_department</div>
                         <div class="stat-value" id="streak-display">0</div>
                         <div class="stat-label">Day Streak</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-icon">⭐</div>
+                        <div class="stat-icon material-symbols-outlined text-accent-blue">star</div>
                         <div class="stat-value" id="level-display">1</div>
                         <div class="stat-label">Level</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-icon">💫</div>
+                        <div class="stat-icon material-symbols-outlined text-accent-teal">workspace_premium</div>
                         <div class="stat-value" id="xp-display">0</div>
                         <div class="stat-label">XP Points</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-icon">✅</div>
+                        <div class="stat-icon material-symbols-outlined text-accent-purple">check_circle</div>
                         <div class="stat-value" id="total-sessions-display">0</div>
                         <div class="stat-label">Sessions</div>
                     </div>
@@ -115,7 +117,7 @@
                 <div class="badges-section">
                     <h3>🏆 Badges Earned</h3>
                     <div id="badges-container" class="badges-container">
-                        <p class="no-badges">Complete sessions to earn badges!</p>
+                        <p class="no-badges text-muted">Complete sessions to earn badges!</p>
                     </div>
                 </div>
                 
@@ -135,11 +137,15 @@
             <div class="header-top">
                 <div class="brand">
                     <h1>StartShield</h1>
-                    <p>Overcome Overwhelm.</p>
+                    <p>Elite Focus</p>
                 </div>
                 <div class="header-actions">
-                    <button type="button" class="icon-btn" aria-label="View stats" aria-haspopup="dialog" aria-controls="stats-modal" onclick="openModal('stats-modal')" title="View Stats">📊</button>
-                    <button type="button" class="icon-btn" aria-label="Open settings" aria-haspopup="dialog" aria-controls="settings-modal" onclick="openModal('settings-modal')" title="Settings">⚙️</button>
+                    <button type="button" class="icon-btn" aria-label="View stats" aria-haspopup="dialog" aria-controls="stats-modal" onclick="openModal('stats-modal')" title="View Stats">
+                        <span class="material-symbols-outlined">insights</span>
+                    </button>
+                    <button type="button" class="icon-btn" aria-label="Open settings" aria-haspopup="dialog" aria-controls="settings-modal" onclick="openModal('settings-modal')" title="Settings">
+                        <span class="material-symbols-outlined">settings</span>
+                    </button>
                 </div>
             </div>
             <div id="onboarding-card" class="onboarding-card hidden" role="note">
@@ -147,15 +153,15 @@
                 <button type="button" id="dismiss-onboarding" class="secondary-btn">Got it</button>
             </div>
             <div class="quick-stats">
-                <span class="quick-stat"><span class="stat-icon-sm">🔥</span> <span id="quick-streak">0</span> day streak</span>
-                <span class="quick-stat"><span class="stat-icon-sm">⭐</span> Lvl <span id="quick-level">1</span></span>
+                <span class="quick-stat"><span class="stat-icon-sm">local_fire_department</span> <span id="quick-streak">0</span> day streak</span>
+                <span class="quick-stat"><span class="stat-icon-sm">star</span> Lvl <span id="quick-level">1</span></span>
             </div>
         </header>
         
         <section id="timer-section" class="fade-in-element">
             <div class="timer-top-label">
                 <div class="mode-indicator">
-                    <span id="mode-label">Focus Mode</span>
+                    <span id="mode-label">Deep Work Protocol</span>
                 </div>
             </div>
             
@@ -169,8 +175,8 @@
             </div>
             
             <div class="controls">
-                <button type="button" id="start-btn" class="primary-btn">Start Focus</button>
-                <button type="button" id="reset-btn" class="ghost-btn">Reset</button>
+                <button type="button" id="start-btn" class="primary-btn">Engage Focus</button>
+                <button type="button" id="reset-btn" class="ghost-btn">Abort</button>
             </div>
             
             <div class="mode-toggle-wrapper">
@@ -200,9 +206,9 @@
                 </section>
                 
                 <section id="ai-suggestion-section" class="card ai-card">
-                    <h3 class="section-header">Stuck?</h3>
+                    <h3 class="section-header">Overwhelmed?</h3>
                     <div id="ai-suggestion" class="ai-suggestion-box">
-                        <p>Overwhelmed? Let the AI break it down.</p>
+                        <p>Let the AI Coach break your task down.</p>
                         <button type="button" class="ask-ai-btn" onclick="getAiSuggestion()">Get a Tip</button>
                     </div>
                 </section>
@@ -213,7 +219,7 @@
     <!-- Badge Notification -->
     <div id="badge-notification" class="badge-notification hidden">
         <div class="badge-content">
-            <span class="badge-icon">🏆</span>
+            <span class="badge-icon material-symbols-outlined">emoji_events</span>
             <div>
                 <h4>New Badge Unlocked!</h4>
                 <p id="badge-name">First Session</p>

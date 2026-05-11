@@ -168,7 +168,7 @@ function updateStartButtonLabel() {
 }
 
 function updateModeUI() {
-    modeLabel.textContent = isBreak ? '☕ Break Mode' : '🧠 Focus Mode';
+    modeLabel.textContent = isBreak ? 'Break Protocol' : 'Deep Work Protocol';
     modeToggle.textContent = isBreak ? 'Switch to Focus' : 'Switch to Break';
     document.body.classList.toggle('break-mode-active', isBreak);
 }
