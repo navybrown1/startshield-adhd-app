@@ -11,11 +11,11 @@ let ambientAudio = null;
 let activeModalId = null;
 let restoreFocusElement = null;
 let toastTimer = null;
+let sessionApiKey = '';
 
 const FOCUSABLE_SELECTOR = 'button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), a[href], [tabindex]:not([tabindex="-1"])';
 const STORAGE = {
-    onboardingDismissed: 'startshieldOnboardingDismissed',
-    apiKey: 'webMistralApiKey'
+    onboardingDismissed: 'startshieldOnboardingDismissed'
 };
 
 const timerDisplay = document.getElementById('timer-display');
@@ -413,22 +413,21 @@ function hydrateSettings() {
     const savedTheme = localStorage.getItem('theme') || 'dark';
     const savedSound = localStorage.getItem('ambientSound') || 'none';
     const savedVolume = localStorage.getItem('ambientVolume') || '50';
-    const savedApiKey = localStorage.getItem(STORAGE.apiKey) || '';
     const notificationsEnabled = localStorage.getItem('notificationsEnabled') !== 'false';
 
     document.getElementById('theme-select').value = savedTheme;
     document.getElementById('ambient-sound').value = savedSound;
     document.getElementById('ambient-volume').value = savedVolume;
     document.getElementById('volume-display').textContent = `${savedVolume}%`;
-    document.getElementById('api-key-input').value = savedApiKey;
+    document.getElementById('api-key-input').value = sessionApiKey;
     document.getElementById('notifications-toggle').checked = notificationsEnabled;
 }
 
 function saveApiKey() {
     const input = document.getElementById('api-key-input');
     const key = input.value.trim();
-    localStorage.setItem(STORAGE.apiKey, key);
-    showToast(key ? 'API key saved locally for this browser.' : 'API key cleared.');
+    sessionApiKey = key;
+    showToast(key ? 'API key available for this page session only.' : 'Session API key cleared.');
 }
 
 function changeTheme(theme) {
