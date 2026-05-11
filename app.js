@@ -524,7 +524,7 @@ function changeVolume(volume) {
     const volumeDisplay = document.getElementById('volume-display');
     if (volumeDisplay) volumeDisplay.textContent = `${numericVolume}%`;
     saveLocalSettings({ ...currentSettings, ambientVolume: numericVolume });
-    showToast(`Ambient volume saved at ${numericVolume}%.`, 2600);
+    showToast(`Ambient volume saved at ${numericVolume}%.`);
 }
 
 async function loadAndRenderStats() {

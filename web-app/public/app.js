@@ -15,6 +15,7 @@ let toastTimer = null;
 let sessionApiKey = '';
 
 const FOCUSABLE_SELECTOR = 'button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), a[href], [tabindex]:not([tabindex="-1"])';
+const DEFAULT_TOAST_DURATION = 2600;
 const STORAGE = {
     onboardingDismissed: 'startshieldOnboardingDismissed'
 };
@@ -47,7 +48,7 @@ updateQuickStats();
 loadTheme();
 loadAmbientSound();
 
-function showToast(message, duration = 2600) {
+function showToast(message, duration = DEFAULT_TOAST_DURATION) {
     if (!toastElement || !message) return;
     toastElement.textContent = message;
     toastElement.classList.remove('hidden');
