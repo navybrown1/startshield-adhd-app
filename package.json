@@ -6,7 +6,9 @@
   "scripts": {
     "start": "electron .",
     "dev": "electron .",
-    "build": "electron-builder"
+    "build": "node scripts/build-web.js",
+    "build:web": "node scripts/build-web.js",
+    "build:desktop": "electron-builder"
   },
   "keywords": [
     "adhd",
