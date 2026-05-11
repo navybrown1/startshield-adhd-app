@@ -11,7 +11,7 @@ let ambientAudio = null;
 let activeModalId = null;
 let restoreFocusElement = null;
 let toastTimer = null;
-// Web mode intentionally keeps this in-memory only to avoid persistent key storage in browser storage.
+// Browser bundle intentionally keeps this in-memory only to avoid persistent key storage.
 let sessionApiKey = '';
 
 const FOCUSABLE_SELECTOR = 'button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), a[href], [tabindex]:not([tabindex="-1"])';
@@ -21,7 +21,9 @@ const STORAGE = {
 };
 
 function getIntFromStorage(key, fallback) {
-    return parseInt(localStorage.getItem(key) || String(fallback), 10);
+    const raw = localStorage.getItem(key);
+    const parsed = parseInt(raw || String(fallback), 10);
+    return Number.isNaN(parsed) ? fallback : parsed;
 }
 
 const timerDisplay = document.getElementById('timer-display');
@@ -63,12 +65,12 @@ function updateOnboardingState() {
 }
 
 function saveTask(task, options = {}) {
-    const value = (task || '').trim();
-    if (!value) return false;
-    localStorage.setItem('currentTask', value);
-    activeTaskDisplay.textContent = `Current Focus: ${value}`;
+    const trimmedTask = (task || '').trim();
+    if (!trimmedTask) return false;
+    localStorage.setItem('currentTask', trimmedTask);
+    activeTaskDisplay.textContent = `Current Focus: ${trimmedTask}`;
     if (focusTaskOverlay) {
-        focusTaskOverlay.textContent = value;
+        focusTaskOverlay.textContent = trimmedTask;
         focusTaskOverlay.classList.remove('hidden');
     }
     if (!options.silent) showToast('Task saved on this device.');
@@ -401,7 +403,7 @@ function trapModalFocus(event) {
     }
 
     if (event.key !== 'Tab') return;
-    const focusable = [...modal.querySelectorAll(FOCUSABLE_SELECTOR)].filter((el) => el.offsetParent !== null);
+    const focusable = [...modal.querySelectorAll(FOCUSABLE_SELECTOR)];
     if (focusable.length === 0) return;
 
     const first = focusable[0];
@@ -432,6 +434,10 @@ function hydrateSettings() {
 function saveApiKey() {
     const input = document.getElementById('api-key-input');
     const key = input.value.trim();
+    if (key && (key.length < 16 || /\s/.test(key))) {
+        showToast('This API key format looks invalid. Please check and try again.', 3600);
+        return;
+    }
     sessionApiKey = key;
     showToast(key ? 'API key available for this page session only.' : 'Session API key cleared.');
 }

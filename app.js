@@ -137,7 +137,13 @@ function updateOnboardingState() {
 function saveTask(task, options = {}) {
     const trimmedTask = (task || '').trim();
     if (!trimmedTask) return false;
-    localStorage.setItem(STORAGE_KEYS.currentTask, trimmedTask);
+    try {
+        localStorage.setItem(STORAGE_KEYS.currentTask, trimmedTask);
+    } catch (error) {
+        console.error('Unable to save task locally:', error);
+        showToast('Could not save task locally. Please try again.', 3600);
+        return false;
+    }
     activeTaskDisplay.textContent = `Current Focus: ${trimmedTask}`;
     if (focusTaskOverlay) {
         focusTaskOverlay.textContent = trimmedTask;
@@ -426,9 +432,7 @@ function trapModalFocus(event) {
 
     if (event.key !== 'Tab') return;
 
-    const focusable = [...modal.querySelectorAll(FOCUSABLE_SELECTOR)].filter(
-        (el) => el.offsetParent !== null
-    );
+    const focusable = [...modal.querySelectorAll(FOCUSABLE_SELECTOR)];
     if (focusable.length === 0) return;
 
     const first = focusable[0];
