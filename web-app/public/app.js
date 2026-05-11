@@ -2,21 +2,26 @@ let timer = null;
 let timeLeft = 25 * 60;
 let totalTime = 25 * 60;
 let isBreak = false;
-let sessionCount = parseInt(localStorage.getItem('sessionCount') || '0', 10);
-let currentStreak = parseInt(localStorage.getItem('currentStreak') || '0', 10);
-let xpPoints = parseInt(localStorage.getItem('xpPoints') || '0', 10);
-let userLevel = parseInt(localStorage.getItem('userLevel') || '1', 10);
+let sessionCount = getIntFromStorage('sessionCount', 0);
+let currentStreak = getIntFromStorage('currentStreak', 0);
+let xpPoints = getIntFromStorage('xpPoints', 0);
+let userLevel = getIntFromStorage('userLevel', 1);
 let badges = JSON.parse(localStorage.getItem('badges') || '[]');
 let ambientAudio = null;
 let activeModalId = null;
 let restoreFocusElement = null;
 let toastTimer = null;
+// Web mode intentionally keeps this in-memory only to avoid persistent key storage in browser storage.
 let sessionApiKey = '';
 
 const FOCUSABLE_SELECTOR = 'button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), a[href], [tabindex]:not([tabindex="-1"])';
 const STORAGE = {
     onboardingDismissed: 'startshieldOnboardingDismissed'
 };
+
+function getIntFromStorage(key, fallback) {
+    return parseInt(localStorage.getItem(key) || String(fallback), 10);
+}
 
 const timerDisplay = document.getElementById('timer-display');
 const startBtn = document.getElementById('start-btn');

@@ -483,7 +483,6 @@ body.theme-light #task-input::placeholder {
     background: var(--panel-strong);
     color: var(--text);
     border: 1px solid var(--border);
-    border: 0;
     border-radius: 12px;
     font-weight: 850;
     cursor: pointer;
