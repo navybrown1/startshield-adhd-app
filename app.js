@@ -9,7 +9,8 @@ const STORAGE_KEYS = {
     currentTask: 'currentTask',
     apiKey: 'mistralApiKey',
     settings: 'startshieldSettings',
-    stats: 'startshieldStats'
+    stats: 'startshieldStats',
+    onboardingDismissed: 'startshieldOnboardingDismissed'
 };
 
 const DEFAULT_SETTINGS = {
@@ -60,6 +61,15 @@ const modeToggle = document.getElementById('mode-toggle');
 const modeLabel = document.getElementById('mode-label');
 const presetBtns = document.querySelectorAll('.preset-btn');
 const sessionCountDisplay = document.getElementById('session-count');
+const onboardingCard = document.getElementById('onboarding-card');
+const dismissOnboardingBtn = document.getElementById('dismiss-onboarding');
+const toastElement = document.getElementById('app-toast');
+const focusTaskOverlay = document.getElementById('focus-task-overlay');
+
+const FOCUSABLE_SELECTOR = 'button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), a[href], [tabindex]:not([tabindex="-1"])';
+let activeModalId = null;
+let restoreFocusElement = null;
+let toastTimer = null;
 
 sessionCountDisplay.textContent = sessionCount;
 
@@ -105,6 +115,56 @@ function cleanAiText(text) {
         .replace(/^\s*[-*+]\s+/gm, '• ')
         .replace(/\n{3,}/g, '\n\n')
         .trim();
+}
+
+function showToast(message, duration = 2600) {
+    if (!toastElement || !message) return;
+    toastElement.textContent = message;
+    toastElement.classList.remove('hidden');
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => {
+        toastElement.classList.add('hidden');
+    }, duration);
+}
+
+function updateOnboardingState() {
+    if (!onboardingCard) return;
+    const dismissed = localStorage.getItem(STORAGE_KEYS.onboardingDismissed) === 'true';
+    const shouldShow = !dismissed && sessionCount === 0;
+    onboardingCard.classList.toggle('hidden', !shouldShow);
+}
+
+function saveTask(task, options = {}) {
+    const trimmedTask = (task || '').trim();
+    if (!trimmedTask) return false;
+    localStorage.setItem(STORAGE_KEYS.currentTask, trimmedTask);
+    activeTaskDisplay.textContent = `Current Focus: ${trimmedTask}`;
+    if (focusTaskOverlay) {
+        focusTaskOverlay.textContent = trimmedTask;
+        focusTaskOverlay.classList.remove('hidden');
+    }
+    if (!options.silent) showToast('Task saved on this device.');
+    return true;
+}
+
+function updateStartButtonLabel() {
+    if (timer) {
+        startBtn.textContent = 'Pause';
+        return;
+    }
+
+    if (timeLeft < totalTime) {
+        startBtn.textContent = 'Resume';
+        return;
+    }
+
+    startBtn.textContent = isBreak ? 'Start Break' : 'Start Focus';
+}
+
+function updateModeUI() {
+    modeLabel.textContent = isBreak ? '☕ Break Mode' : '🧠 Focus Mode';
+    modeToggle.textContent = isBreak ? 'Switch to Focus' : 'Switch to Break';
+    document.body.classList.toggle('break-mode-active', isBreak);
 }
 
 function updateDisplay() {
@@ -170,9 +230,7 @@ function switchMode() {
     timerDisplay.classList.toggle('break-mode', isBreak);
     document.querySelector('.timer-wrapper').classList.toggle('break-mode', isBreak);
     modeLabel.parentElement.classList.toggle('break-mode', isBreak);
-
-    modeLabel.textContent = isBreak ? 'Break Mode' : 'Focus Mode';
-    modeToggle.textContent = isBreak ? 'Switch to Focus' : 'Switch to Break';
+    updateModeUI();
 
     if (isBreak) {
         const breakMinutes = (sessionCount > 0 && sessionCount % 4 === 0) ? 15 : 5;
@@ -186,6 +244,7 @@ function switchMode() {
     }
 
     updateDisplay();
+    updateStartButtonLabel();
 }
 
 function resetTimer() {
@@ -193,7 +252,7 @@ function resetTimer() {
         clearInterval(timer);
         timer = null;
     }
-    startBtn.textContent = 'Start';
+    updateStartButtonLabel();
 }
 
 async function recordCompletedFocusSession() {
@@ -203,6 +262,7 @@ async function recordCompletedFocusSession() {
     sessionCount += 1;
     localStorage.setItem(STORAGE_KEYS.sessionCount, String(sessionCount));
     sessionCountDisplay.textContent = sessionCount;
+    updateOnboardingState();
 
     if (hasElectronBridge && window.electronAPI.logFocusSession) {
         try {
@@ -269,10 +329,12 @@ function startTimer() {
         Notification.requestPermission();
     }
 
+    saveTask(taskInput.value, { silent: true });
+
     if (timer) {
         clearInterval(timer);
         timer = null;
-        startBtn.textContent = 'Start';
+        updateStartButtonLabel();
         return;
     }
 
@@ -285,7 +347,7 @@ function startTimer() {
 
         clearInterval(timer);
         timer = null;
-        startBtn.textContent = 'Start';
+        updateStartButtonLabel();
         playNotificationSound();
 
         if (isBreak) {
@@ -298,7 +360,7 @@ function startTimer() {
         }
     }, 1000);
 
-    startBtn.textContent = 'Pause';
+    updateStartButtonLabel();
 }
 
 function reset() {
@@ -321,7 +383,12 @@ function openModal(id) {
     const modal = document.getElementById(id);
     if (!modal) return;
 
+    restoreFocusElement = document.activeElement;
+    activeModalId = id;
     modal.classList.remove('hidden');
+    modal.setAttribute('aria-hidden', 'false');
+    const modalContent = modal.querySelector('.modal-content');
+    if (modalContent) modalContent.focus();
 
     if (id === 'settings-modal') {
         hydrateSettingsModal();
@@ -334,7 +401,47 @@ function openModal(id) {
 
 function closeModal(id) {
     const modal = document.getElementById(id);
-    if (modal) modal.classList.add('hidden');
+    if (!modal) return;
+    modal.classList.add('hidden');
+    modal.setAttribute('aria-hidden', 'true');
+    if (activeModalId === id) {
+        activeModalId = null;
+        if (restoreFocusElement && typeof restoreFocusElement.focus === 'function') {
+            restoreFocusElement.focus();
+        }
+        restoreFocusElement = null;
+    }
+}
+
+function trapModalFocus(event) {
+    if (!activeModalId) return;
+    const modal = document.getElementById(activeModalId);
+    if (!modal || modal.classList.contains('hidden')) return;
+
+    if (event.key === 'Escape') {
+        event.preventDefault();
+        closeModal(activeModalId);
+        return;
+    }
+
+    if (event.key !== 'Tab') return;
+
+    const focusable = [...modal.querySelectorAll(FOCUSABLE_SELECTOR)].filter(
+        (el) => el.offsetParent !== null
+    );
+    if (focusable.length === 0) return;
+
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    const isShift = event.shiftKey;
+
+    if (isShift && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+    } else if (!isShift && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+    }
 }
 
 async function getStoredApiKey() {
@@ -385,6 +492,7 @@ async function saveApiKey() {
     const apiKey = input.value.trim();
     await saveStoredApiKey(apiKey);
     showInlineStatus(input, apiKey ? 'API key saved for this browser.' : 'API key cleared.');
+    showToast(apiKey ? 'API key saved locally on this device.' : 'Saved API key cleared.');
 }
 
 function showInlineStatus(anchorElement, message) {
@@ -403,10 +511,12 @@ function changeTheme(theme) {
     document.body.classList.remove('theme-dark', 'theme-light', 'theme-ocean', 'theme-forest');
     document.body.classList.add(`theme-${theme}`);
     saveLocalSettings({ ...currentSettings, theme });
+    showToast(`Theme set to ${theme}.`);
 }
 
 function changeAmbientSound(sound) {
     saveLocalSettings({ ...currentSettings, ambientSound: sound });
+    showToast(sound === 'none' ? 'Ambient sound turned off.' : `Ambient sound set to ${sound}.`);
 }
 
 function changeVolume(volume) {
@@ -414,6 +524,7 @@ function changeVolume(volume) {
     const volumeDisplay = document.getElementById('volume-display');
     if (volumeDisplay) volumeDisplay.textContent = `${numericVolume}%`;
     saveLocalSettings({ ...currentSettings, ambientVolume: numericVolume });
+    showToast(`Ambient volume saved at ${numericVolume}%.`, 1600);
 }
 
 async function loadAndRenderStats() {
@@ -480,6 +591,7 @@ function showNewBadges(badges) {
 
     badgeName.textContent = BADGE_LABELS[badges[0]] || badges[0];
     notification.classList.remove('hidden');
+    showToast(`New badge unlocked: ${BADGE_LABELS[badges[0]] || badges[0]}`);
 
     setTimeout(() => {
         notification.classList.add('hidden');
@@ -625,30 +737,44 @@ resetBtn.addEventListener('click', reset);
 modeToggle.addEventListener('click', switchMode);
 
 setTaskBtn.addEventListener('click', () => {
-    const task = taskInput.value.trim();
-    if (task) {
-        activeTaskDisplay.textContent = `Current Focus: ${task}`;
-        taskInput.value = '';
-        localStorage.setItem(STORAGE_KEYS.currentTask, task);
-    }
+    const saved = saveTask(taskInput.value);
+    if (saved) taskInput.value = '';
 });
 
 taskInput.addEventListener('keypress', (event) => {
     if (event.key === 'Enter') {
-        setTaskBtn.click();
+        event.preventDefault();
+        const saved = saveTask(taskInput.value);
+        if (saved) taskInput.value = '';
     }
+});
+
+taskInput.addEventListener('blur', () => {
+    saveTask(taskInput.value, { silent: true });
 });
 
 const notificationsToggle = document.getElementById('notifications-toggle');
 if (notificationsToggle) {
     notificationsToggle.addEventListener('change', (event) => {
         saveLocalSettings({ ...currentSettings, notificationsEnabled: event.target.checked });
+        showToast(event.target.checked ? 'Notifications enabled.' : 'Notifications disabled.');
+    });
+}
+
+if (dismissOnboardingBtn) {
+    dismissOnboardingBtn.addEventListener('click', () => {
+        localStorage.setItem(STORAGE_KEYS.onboardingDismissed, 'true');
+        updateOnboardingState();
     });
 }
 
 const savedTask = localStorage.getItem(STORAGE_KEYS.currentTask);
 if (savedTask) {
     activeTaskDisplay.textContent = `Current Focus: ${savedTask}`;
+    if (focusTaskOverlay) {
+        focusTaskOverlay.textContent = savedTask;
+        focusTaskOverlay.classList.remove('hidden');
+    }
 }
 
 if (hasElectronBridge && window.electronAPI.onTimerUpdate) {
@@ -667,6 +793,19 @@ if (hasElectronBridge && window.electronAPI.onTimerUpdate) {
     }
 }
 
+document.addEventListener('keydown', trapModalFocus);
+
+document.querySelectorAll('.modal').forEach((modal) => {
+    modal.addEventListener('mousedown', (event) => {
+        if (event.target === modal) {
+            closeModal(modal.id);
+        }
+    });
+});
+
 changeTheme(currentSettings.theme);
+updateModeUI();
+updateOnboardingState();
 loadAndRenderStats();
 updateDisplay();
+updateStartButtonLabel();

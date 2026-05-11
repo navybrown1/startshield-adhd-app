@@ -71,6 +71,13 @@ button {
     -webkit-tap-highlight-color: transparent;
 }
 
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+    outline: 3px solid rgba(102, 126, 234, 0.92);
+    outline-offset: 2px;
+}
+
 .title-bar-drag-area {
     position: fixed;
     top: 0;
@@ -133,6 +140,29 @@ header p {
     flex-wrap: wrap;
     gap: 0.55rem;
     margin-top: 0.15rem;
+}
+
+.onboarding-card {
+    display: grid;
+    gap: 0.6rem;
+    justify-items: start;
+    text-align: left;
+    padding: 0.85rem 0.95rem;
+    background: rgba(102, 126, 234, 0.12);
+    border: 1px solid rgba(102, 126, 234, 0.35);
+    border-radius: 12px;
+    margin-top: 0.5rem;
+}
+
+.onboarding-card p {
+    margin: 0;
+    color: var(--text);
+    font-size: 0.88rem;
+    line-height: 1.4;
+}
+
+.onboarding-card.hidden {
+    display: none;
 }
 
 .quick-stat {
@@ -304,6 +334,11 @@ body.theme-light #mode-label {
     box-shadow: 0 14px 32px rgba(102, 126, 234, 0.28);
 }
 
+#start-btn {
+    min-height: 52px;
+    font-size: 1rem;
+}
+
 .controls button:hover {
     transform: translateY(-2px);
     box-shadow: 0 18px 38px rgba(102, 126, 234, 0.36);
@@ -315,7 +350,7 @@ body.theme-light #mode-label {
 
 #reset-btn {
     background: var(--panel-strong);
-    color: var(--text);
+    color: var(--muted);
     border: 1px solid var(--border);
     box-shadow: none;
 }
@@ -445,17 +480,19 @@ body.theme-light #task-input::placeholder {
     min-width: 62px;
     min-height: 48px;
     padding: 0 1rem;
-    background: #52607a;
-    color: white;
+    background: var(--panel-strong);
+    color: var(--text);
+    border: 1px solid var(--border);
     border: 0;
     border-radius: 12px;
     font-weight: 850;
     cursor: pointer;
-    transition: transform 0.2s, background 0.2s;
+    transition: transform 0.2s, background 0.2s, border-color 0.2s;
 }
 
 #set-task-btn:hover {
-    background: #66728d;
+    background: rgba(255, 255, 255, 0.13);
+    border-color: rgba(102, 126, 234, 0.35);
     transform: translateY(-1px);
 }
 
@@ -868,6 +905,26 @@ body.theme-light .setting-group select {
     pointer-events: none;
 }
 
+.app-toast {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    max-width: 320px;
+    padding: 0.7rem 0.85rem;
+    border-radius: 10px;
+    background: rgba(26, 26, 46, 0.95);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-size: 0.86rem;
+    line-height: 1.35;
+    z-index: 3200;
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.35);
+}
+
+.app-toast.hidden {
+    display: none;
+}
+
 .badge-content {
     display: flex;
     align-items: center;
@@ -990,6 +1047,7 @@ body.theme-light .setting-group select {
     #set-task-btn,
     #send-btn {
         width: 100%;
+        min-height: 50px;
     }
 
     .bottom-sections {
