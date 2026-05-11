@@ -1,0 +1,16 @@
+{
+  "name": "startshield-web",
+  "version": "1.0.0",
+  "description": "StartShield ADHD Focus App - Web Version for Vercel",
+  "scripts": {
+    "dev": "vercel dev",
+    "build": "echo 'Building for production...'",
+    "start": "vercel dev"
+  },
+  "dependencies": {
+    "@vercel/node": "^3.0.0"
+  },
+  "devDependencies": {
+    "vercel": "^32.0.0"
+  }
+}

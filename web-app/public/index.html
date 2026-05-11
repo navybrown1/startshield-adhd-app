@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src https://api.mistral.ai;">
+    <title>StartShield - AI Focus Guardian</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="theme-dark">
+    <div class="title-bar-drag-area"></div>
+    
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>⚙️ Settings</h2>
+                <button class="close-btn" onclick="closeModal('settings-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="setting-group">
+                    <label>Mistral API Key</label>
+                    <input type="password" id="api-key-input" placeholder="Enter your Mistral API key">
+                    <button class="save-btn" onclick="saveApiKey()">Save API Key</button>
+                    <p class="setting-hint">Get your key from console.mistral.ai</p>
+                </div>
+                
+                <div class="setting-group">
+                    <label>Theme</label>
+                    <select id="theme-select" onchange="changeTheme(this.value)">
+                        <option value="dark">🌙 Dark</option>
+                        <option value="light">☀️ Light</option>
+                        <option value="ocean">🌊 Ocean</option>
+                        <option value="forest">🌲 Forest</option>
+                    </select>
+                </div>
+                
+                <div class="setting-group">
+                    <label>Ambient Sound</label>
+                    <select id="ambient-sound" onchange="changeAmbientSound(this.value)">
+                        <option value="none">Silence</option>
+                        <option value="rain">🌧️ Rain</option>
+                        <option value="cafe">☕ Café</option>
+                        <option value="white-noise">📻 White Noise</option>
+                        <option value="forest">🌳 Forest</option>
+                    </select>
+                    <input type="range" id="ambient-volume" min="0" max="100" value="50" onchange="changeVolume(this.value)">
+                    <span id="volume-display">50%</span>
+                </div>
+                
+                <div class="setting-group">
+                    <label>Notifications</label>
+                    <label class="toggle-label">
+                        <input type="checkbox" id="notifications-toggle" checked>
+                        <span class="toggle-slider"></span>
+                        Enable Notifications
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- AI Coach Modal -->
+    <div id="ai-coach-modal" class="modal hidden">
+        <div class="modal-content ai-coach-content">
+            <div class="modal-header">
+                <h2>🤖 AI Focus Coach</h2>
+                <button class="close-btn" onclick="closeModal('ai-coach-modal')">&times;</button>
+            </div>
+            <div class="modal-body ai-chat-body">
+                <div id="chat-messages" class="chat-messages">
+                    <div class="message ai-message">
+                        <p>Hey! I'm your AI Focus Coach. I'm here to help you stay productive and motivated. How can I help you today?</p>
+                    </div>
+                </div>
+                <div class="chat-input-container">
+                    <input type="text" id="chat-input" placeholder="Ask me anything about focus..." onkeypress="handleChatKey(event)">
+                    <button onclick="sendChatMessage()" id="send-btn">Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Stats Modal -->
+    <div id="stats-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📊 Your Progress</h2>
+                <button class="close-btn" onclick="closeModal('stats-modal')">&times;</button>
+            </div>
+            <div class="modal-body stats-body">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">🔥</div>
+                        <div class="stat-value" id="streak-display">0</div>
+                        <div class="stat-label">Day Streak</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">⭐</div>
+                        <div class="stat-value" id="level-display">1</div>
+                        <div class="stat-label">Level</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">💫</div>
+                        <div class="stat-value" id="xp-display">0</div>
+                        <div class="stat-label">XP Points</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">✅</div>
+                        <div class="stat-value" id="total-sessions-display">0</div>
+                        <div class="stat-label">Sessions</div>
+                    </div>
+                </div>
+                
+                <div class="badges-section">
+                    <h3>🏆 Badges Earned</h3>
+                    <div id="badges-container" class="badges-container">
+                        <p class="no-badges">Complete sessions to earn badges!</p>
+                    </div>
+                </div>
+                
+                <div class="progress-section">
+                    <h3>Next Level Progress</h3>
+                    <div class="progress-bar-container">
+                        <div id="level-progress" class="progress-bar"></div>
+                    </div>
+                    <p id="level-progress-text">0/500 XP to next level</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <header>
+            <div class="header-top">
+                <h1>StartShield</h1>
+                <div class="header-actions">
+                    <button class="icon-btn" onclick="openModal('stats-modal')" title="View Stats">📊</button>
+                    <button class="icon-btn" onclick="openModal('settings-modal')" title="Settings">⚙️</button>
+                </div>
+            </div>
+            <p>Your AI-Powered Focus Guardian</p>
+            <div class="quick-stats">
+                <span class="quick-stat">🔥 <span id="quick-streak">0</span> day streak</span>
+                <span class="quick-stat">⭐ Level <span id="quick-level">1</span></span>
+            </div>
+        </header>
+        
+        <section id="timer-section">
+            <div class="timer-wrapper">
+                <svg id="progress-ring" class="progress-ring" viewBox="0 0 100 100">
+                    <circle class="progress-ring-circle-bg" cx="50" cy="50" r="45"/>
+                    <circle class="progress-circle" cx="50" cy="50" r="45"/>
+                </svg>
+                <div id="timer-display">25:00</div>
+                <div id="focus-task-overlay" class="focus-task-overlay hidden"></div>
+            </div>
+            
+            <div class="mode-indicator">
+                <span id="mode-label">Focus Mode</span>
+            </div>
+            
+            <div class="controls">
+                <button id="start-btn">Start</button>
+                <button id="reset-btn">Reset</button>
+            </div>
+            
+            <div class="mode-toggle-wrapper">
+                <button id="mode-toggle" class="secondary-btn">Switch to Break</button>
+            </div>
+        </section>
+        
+        <div class="bottom-sections">
+            <section id="duration-section">
+                <h3 class="section-header">Focus Presets</h3>
+                <div class="preset-group">
+                    <button class="preset-btn" data-minutes="15">15m</button>
+                    <button class="preset-btn active" data-minutes="25">25m</button>
+                    <button class="preset-btn" data-minutes="50">50m</button>
+                    <button class="preset-btn" data-minutes="90">90m</button>
+                </div>
+            </section>
+            
+            <section id="task-section">
+                <h3 class="section-header">Current Task</h3>
+                <div class="task-input-wrapper">
+                    <input type="text" id="task-input" placeholder="What are you focusing on?">
+                    <button id="set-task-btn">Set</button>
+                </div>
+                <p id="active-task-display"></p>
+            </section>
+            
+            <section id="ai-suggestion-section">
+                <h3 class="section-header">💡 AI Suggestion</h3>
+                <div id="ai-suggestion" class="ai-suggestion-box">
+                    <p>Click "Ask AI" for personalized focus tips!</p>
+                    <button class="ask-ai-btn" onclick="getAiSuggestion()">Ask AI Coach</button>
+                </div>
+            </section>
+
+            <section id="stats-section">
+                <span class="stats-label">Sessions Completed</span>
+                <span id="session-count" class="stats-value">0</span>
+            </section>
+        </div>
+    </div>
+    
+    <!-- Badge Notification -->
+    <div id="badge-notification" class="badge-notification hidden">
+        <div class="badge-content">
+            <span class="badge-icon">🏆</span>
+            <div>
+                <h4>New Badge Unlocked!</h4>
+                <p id="badge-name">First Session</p>
+            </div>
+        </div>
+    </div>
+    
+    <script src="app.js"></script>
+</body>
+</html>
