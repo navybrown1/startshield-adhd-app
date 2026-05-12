@@ -12,7 +12,7 @@ let activeModalId = null;
 let restoreFocusElement = null;
 let toastTimer = null;
 // Browser bundle intentionally keeps this in-memory only to avoid persistent key storage.
-let sessionApiKey = '';
+let sessionApiKey = sessionStorage.getItem('mistralApiKey') || '';
 
 const FOCUSABLE_SELECTOR = 'button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), a[href], [tabindex]:not([tabindex="-1"])';
 const DEFAULT_TOAST_DURATION = 2600;
@@ -558,7 +558,9 @@ function saveApiKey() {
         return;
     }
     sessionApiKey = key;
-    showToast(key ? 'API key available for this page session only.' : 'Session API key cleared.');
+    if (key) sessionStorage.setItem('mistralApiKey', key);
+    else sessionStorage.removeItem('mistralApiKey');
+    showToast(key ? 'API key saved for this session.' : 'Session API key cleared.');
 }
 
 function changeTheme(theme) {
@@ -630,9 +632,11 @@ async function sendChatMessage() {
     const loadingId = addMessageToChat('ai', 'Thinking...', true);
 
     try {
+        const chatHeaders = { 'Content-Type': 'application/json' };
+        if (sessionApiKey) chatHeaders['X-API-Key'] = sessionApiKey;
         const response = await fetch('/api/chat', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: chatHeaders,
             body: JSON.stringify({
                 message,
                 context: {
@@ -694,9 +698,11 @@ async function getAiSuggestion() {
     try {
         const hour = new Date().getHours();
         const timeOfDay = hour < 12 ? 'morning' : hour < 17 ? 'afternoon' : 'evening';
+        const suggHeaders = { 'Content-Type': 'application/json' };
+        if (sessionApiKey) suggHeaders['X-API-Key'] = sessionApiKey;
         const response = await fetch('/api/suggestion', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: suggHeaders,
             body: JSON.stringify({
                 context: {
                     task: getStorageValue('currentTask', ''),
