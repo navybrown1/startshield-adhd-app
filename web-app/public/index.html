@@ -3,17 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com; font-src https://fonts.gstatic.com; script-src 'self' 'unsafe-inline'; connect-src 'self' https://api.mistral.ai; media-src https://cdn.pixabay.com;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com; font-src https://fonts.gstatic.com; script-src 'self' 'unsafe-inline'; connect-src 'self' https://api.mistral.ai; media-src 'self';">
     <title>StartShield — Focus</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@500;600&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="home-enhancements.css">
+    <link rel="stylesheet" href="video-bg.css">
 </head>
 <body>
     <!-- Skip nav -->
     <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <video class="app-video-bg" autoplay muted loop playsinline preload="auto" aria-hidden="true">
+        <source src="assets/video/harmony-hero-mobile.mp4" type="video/mp4" media="(max-width: 760px)">
+        <source src="assets/video/harmony-hero.mp4" type="video/mp4">
+    </video>
+    <div class="app-video-scrim" aria-hidden="true"></div>
 
     <div class="title-bar-drag-area"></div>
 
@@ -149,7 +156,6 @@
                 <span class="streak-chip" aria-label="Current streak">
                     <span id="quick-streak">0</span>-day streak
                 </span>
-                <a href="harmony.html" class="harmony-chip" aria-label="Open harmony relaxation page">Harmony</a>
                 <button type="button" class="icon-btn" aria-label="View progress" aria-haspopup="dialog" aria-controls="stats-modal" onclick="openModal('stats-modal')">
                     <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
                 </button>
