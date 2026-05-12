@@ -1,4 +1,12 @@
 {
-  "outputDirectory": "web-app/public",
-  "cleanUrls": true
+  "version": 2,
+  "builds": [
+    {"src": "web-app/api/*.js", "use": "@vercel/node"},
+    {"src": "web-app/public/**", "use": "@vercel/static"}
+  ],
+  "routes": [
+    {"src": "/api/(.*)", "dest": "/web-app/api/$1"},
+    {"src": "/", "dest": "/web-app/public/index.html"},
+    {"src": "/(.*)", "dest": "/web-app/public/$1"}
+  ]
 }
