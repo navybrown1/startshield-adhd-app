@@ -5,10 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#0f1f1d">
     <meta name="description" content="A calm StartShield landing page with an immersive breeze-inspired video hero for focus and relaxation.">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; script-src 'self'; media-src https://videos.pexels.com; img-src 'self' data:; connect-src 'self';">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; script-src 'self'; media-src https://assets.mixkit.co https://videos.pexels.com; img-src 'self' data:; connect-src 'self' https://assets.mixkit.co https://videos.pexels.com;">
     <title>StartShield Harmony</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://assets.mixkit.co">
     <link rel="preconnect" href="https://videos.pexels.com">
     <link rel="preload" href="assets/harmony-poster.svg" as="image" type="image/svg+xml">
     <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -20,7 +21,9 @@
 
     <main class="harmony-page" aria-labelledby="harmony-title">
         <section class="harmony-hero" aria-label="Harmony and relaxation hero">
-            <video class="harmony-video" autoplay muted loop playsinline preload="metadata" poster="assets/harmony-poster.svg" aria-hidden="true" data-harmony-video>
+            <video class="harmony-video" autoplay muted loop playsinline preload="auto" poster="assets/harmony-poster.svg" aria-hidden="true" data-harmony-video>
+                <source src="https://assets.mixkit.co/videos/preview/mixkit-layers-of-waves-reaching-the-shore-of-the-beach-51485-large.mp4" type="video/mp4">
+                <source src="https://assets.mixkit.co/videos/preview/mixkit-waves-in-the-water-1164-large.mp4" type="video/mp4">
                 <source src="https://videos.pexels.com/video-files/4427479/4427479-hd_1080_1920_30fps.mp4" type="video/mp4">
             </video>
             <div class="harmony-poster" aria-hidden="true"></div>
@@ -43,7 +46,7 @@
                 </div>
             </div>
 
-            <div class="harmony-status" role="status" aria-live="polite" data-video-status>Loading soft motion...</div>
+            <div class="harmony-status" role="status" aria-live="polite" data-video-status>Loading video...</div>
         </section>
     </main>
 </body>
