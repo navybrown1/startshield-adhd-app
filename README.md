@@ -1,6 +1,8 @@
-# 🚀 StartShield - Supercharged ADHD Focus App
+# StartShield — ADHD Focus App
 
-A **supercharged** desktop ADHD focus timer application with AI coaching, gamification, ambient sounds, and beautiful themes.
+A warm, accessible focus timer for ADHD brains — with AI coaching, gamification, ambient sounds, and a calm premium aesthetic.
+
+> **Redesigned (May 2026):** The app received a full visual and UX overhaul — replacing the original cyberpunk neon palette with a warm cream/sage design system, adding a multi-step onboarding flow, a dedicated task dashboard, and a standalone settings page. All existing functionality (timer logic, Mistral AI integration, localStorage-backed streaks/XP/levels, ambient sound) was preserved. The Mistral API key is held in session memory only and is never written to storage.
 
 ## ✨ New Supercharged Features
 

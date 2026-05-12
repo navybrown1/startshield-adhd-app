@@ -109,12 +109,22 @@ function announce(message) {
     requestAnimationFrame(() => { timerAnnouncer.textContent = message; });
 }
 
-function showToast(message, duration = DEFAULT_TOAST_DURATION) {
+function showToast(message, duration = DEFAULT_TOAST_DURATION, type = '') {
     if (!toastElement || !message) return;
     toastElement.textContent = message;
+    toastElement.className = 'app-toast';
+    if (type) toastElement.classList.add(`app-toast--${type}`);
     toastElement.classList.remove('hidden');
     if (toastTimer) clearTimeout(toastTimer);
     toastTimer = setTimeout(() => toastElement.classList.add('hidden'), duration);
+}
+
+function showSuccessToast(message, duration = DEFAULT_TOAST_DURATION) {
+    showToast(message, duration, 'success');
+}
+
+function showErrorToast(message, duration = LONG_TOAST_DURATION) {
+    showToast(message, duration, 'error');
 }
 
 function updateOnboardingState() {
@@ -369,6 +379,16 @@ function startTimer() {
 
         announce('Focus session complete. Nice work!');
         sendDesktopNotification('Session complete', 'Great work! Time for a break.');
+
+        // Show success banner
+        const banner = document.getElementById('session-banner');
+        const bannerText = document.getElementById('session-banner-text');
+        if (banner && bannerText) {
+            const msgs = ['Nice work today.', 'One session down.', 'That was solid focus.'];
+            bannerText.textContent = msgs[sessionCount % msgs.length];
+            banner.classList.remove('hidden');
+            setTimeout(() => banner.classList.add('hidden'), 4000);
+        }
         sessionCount += 1;
         setStorageValue('sessionCount', sessionCount);
         sessionCountDisplay.textContent = sessionCount;
@@ -630,7 +650,7 @@ async function sendChatMessage() {
     } catch (error) {
         removeMessageFromChat(loadingId);
         addMessageToChat('ai', 'Could not reach the AI coach. Try again in a moment.');
-        showToast('AI coach is temporarily unavailable.');
+        showErrorToast('AI coach is temporarily unavailable. Check your connection and try again.');
         console.error('Chat error:', error);
     }
 }
@@ -689,8 +709,8 @@ async function getAiSuggestion() {
         const data = await response.json();
         renderSuggestionBox(data.suggestion || 'No suggestion received.', 'Ask Again');
     } catch (error) {
-        renderSuggestionBox('Could not get a suggestion right now. Try again in a moment.', 'Try Again');
-        showToast('Suggestion service is currently unavailable.');
+        renderSuggestionBox('Could not get a tip right now. Try again in a moment.', 'Try again');
+        showErrorToast('Could not reach the AI coach right now.');
         console.error('Suggestion error:', error);
     }
 }
