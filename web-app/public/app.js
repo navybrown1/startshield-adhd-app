@@ -495,15 +495,24 @@ function saveApiKey() {
 }
 
 function changeTheme(theme) {
-    document.body.className = `theme-${theme}`;
+    if (theme === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+    } else {
+        document.documentElement.removeAttribute('data-theme');
+    }
     setStorageValue('theme', theme);
     showToast(`Theme set to ${theme}.`);
 }
 
 function loadTheme() {
-    const savedTheme = getStorageValue('theme', 'dark');
-    document.body.className = `theme-${savedTheme}`;
-    document.getElementById('theme-select').value = savedTheme;
+    const savedTheme = getStorageValue('theme', 'light');
+    if (savedTheme === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+    } else {
+        document.documentElement.removeAttribute('data-theme');
+    }
+    const themeSelect = document.getElementById('theme-select');
+    if (themeSelect) themeSelect.value = savedTheme;
 }
 
 function changeAmbientSound(sound) {
