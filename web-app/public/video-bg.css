@@ -82,56 +82,104 @@ body {
     border-color: rgba(255, 255, 255, 0.52) !important;
 }
 
+/* ── Timer wrapper — soft dark halo for contrast pocket ──────── */
+.timer-wrapper {
+    position: relative;
+    z-index: 1;
+}
+
+.timer-wrapper::before {
+    content: '';
+    position: absolute;
+    inset: -38%;
+    background: radial-gradient(
+        circle at center,
+        rgba(6, 18, 16, 0.62) 0%,
+        rgba(6, 18, 16, 0.40) 32%,
+        rgba(6, 18, 16, 0.18) 56%,
+        rgba(6, 18, 16, 0) 72%
+    );
+    z-index: -1;
+    pointer-events: none;
+    border-radius: 50%;
+}
+
 /* ── Timer number and sub-label ─────────────────────────────── */
 #timer-display {
-    color: rgba(255, 255, 255, 0.96) !important;
-    text-shadow: 0 2px 20px rgba(0, 0, 0, 0.45);
+    color: #ffffff !important;
+    text-shadow:
+        0 2px 10px rgba(0, 0, 0, 0.75),
+        0 0 36px rgba(0, 0, 0, 0.50) !important;
 }
 
 .timer-sub {
-    color: rgba(255, 255, 255, 0.55) !important;
+    color: rgba(255, 255, 255, 0.88) !important;
+    text-shadow: 0 1px 6px rgba(0, 0, 0, 0.7) !important;
+}
+
+/* ── Focus task overlay inside the ring (above timer number) ── */
+.focus-task-overlay {
+    color: #b8f3e1 !important;
+    text-shadow:
+        0 1px 4px rgba(0, 0, 0, 0.85),
+        0 0 14px rgba(0, 0, 0, 0.6) !important;
+    font-weight: 700 !important;
 }
 
 /* ── Timer ring — teal gradient fill, teal track ─────────────── */
 .progress-ring-circle-bg {
-    stroke: rgba(184, 243, 225, 0.20) !important;
+    stroke: rgba(184, 243, 225, 0.24) !important;
 }
 
 .progress-circle {
     stroke: url(#ring-gradient) !important;
+    filter: drop-shadow(0 0 8px rgba(78, 201, 160, 0.35));
 }
 
-/* ── Mode label below the ring ──────────────────────────────── */
+/* ── Mode label "Focus session" — dark glass with bright text ── */
 #mode-label {
-    background: rgba(184, 243, 225, 0.14) !important;
-    border-color: rgba(184, 243, 225, 0.32) !important;
-    color: rgba(184, 243, 225, 0.88) !important;
-    backdrop-filter: blur(12px) !important;
-    -webkit-backdrop-filter: blur(12px) !important;
+    background: rgba(6, 22, 20, 0.62) !important;
+    border-color: rgba(184, 243, 225, 0.42) !important;
+    color: rgba(255, 255, 255, 0.96) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35) !important;
 }
 
 /* ── SESSION LENGTH eyebrow (outside glass cards) ───────────── */
 .duration-block .block-eyebrow {
-    color: rgba(255, 255, 255, 0.55) !important;
+    color: rgba(255, 255, 255, 0.88) !important;
+    font-weight: 700 !important;
+    text-shadow: 0 1px 5px rgba(0, 0, 0, 0.65) !important;
 }
 
 /* ── End early + Take a break (bare btns over video) ─────────── */
 .end-early-btn {
-    color: rgba(255, 255, 255, 0.65) !important;
+    color: rgba(255, 255, 255, 0.90) !important;
+    text-shadow: 0 1px 5px rgba(0, 0, 0, 0.65) !important;
+    font-weight: 600 !important;
 }
 
 .end-early-btn:hover {
-    color: rgba(255, 255, 255, 0.95) !important;
-    background: rgba(255, 255, 255, 0.10) !important;
+    color: #ffffff !important;
+    background: rgba(255, 255, 255, 0.12) !important;
 }
 
 .mode-toggle-wrapper .btn-quiet {
-    color: rgba(255, 255, 255, 0.58) !important;
+    color: rgba(255, 255, 255, 0.85) !important;
+    text-shadow: 0 1px 5px rgba(0, 0, 0, 0.65) !important;
+    font-weight: 600 !important;
 }
 
 .mode-toggle-wrapper .btn-quiet:hover {
-    color: rgba(255, 255, 255, 0.90) !important;
-    background: rgba(255, 255, 255, 0.10) !important;
+    color: #ffffff !important;
+    background: rgba(255, 255, 255, 0.12) !important;
+}
+
+/* ── Active task under the input (inside glass card) ──────────── */
+.active-task-display {
+    color: var(--sage-deep, #2E4634) !important;
+    font-weight: 700 !important;
 }
 
 /* ── Onboarding card ─────────────────────────────────────────── */
