@@ -21,14 +21,11 @@ if (video) {
 
     video.addEventListener('playing', markVideoReady, { once: true });
     video.addEventListener('canplay', markVideoReady, { once: true });
+    video.addEventListener('canplaythrough', markVideoReady, { once: true });
     video.addEventListener('loadeddata', markVideoReady, { once: true });
     video.addEventListener('error', markVideoUnavailable, { once: true });
-    video.querySelectorAll('source').forEach((source) => {
-        source.addEventListener('error', markVideoUnavailable, { once: true });
-    });
 
     const startPlayback = () => {
-        video.load();
         const playback = video.play();
         if (playback && typeof playback.catch === 'function') {
             playback.catch(() => {
@@ -45,7 +42,7 @@ if (video) {
 
     setTimeout(() => {
         if (!page.classList.contains('video-ready')) {
-            markVideoUnavailable();
+            if (status) status.textContent = 'Still loading video. Fallback stays visible until motion starts.';
         }
     }, 8000);
 }
