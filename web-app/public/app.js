@@ -365,6 +365,17 @@ function startTimer() {
             setStorageValue('lastSessionDate', today);
         }
 
+        // Log session for dashboard heatmap
+        const sessionLog = getJsonFromStorage('sessionLog', []);
+        const activePresetForLog = document.querySelector('.preset-btn.active');
+        const logMins = activePresetForLog ? parseInt(activePresetForLog.dataset.minutes, 10) : Math.round(totalTime / 60);
+        sessionLog.push({
+            date: new Date().toISOString(),
+            task: getStorageValue('currentTask', ''),
+            durationMins: logMins
+        });
+        setStorageValue('sessionLog', JSON.stringify(sessionLog));
+
         addXP(50);
         checkBadges();
         updateQuickStats();
