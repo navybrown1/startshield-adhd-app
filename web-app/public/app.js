@@ -76,18 +76,55 @@ const focusTaskOverlay = document.getElementById('focus-task-overlay');
 const toastElement = document.getElementById('app-toast');
 const onboardingCard = document.getElementById('onboarding-card');
 const dismissOnboardingBtn = document.getElementById('dismiss-onboarding');
+const timerSubLabel = document.getElementById('timer-sub-label');
+const timerAnnouncer = document.getElementById('timer-announcer');
+
+// Redirect to onboarding if never completed
+if (getStorageValue('startshieldOnboardingDismissed', 'false') !== 'true') {
+    window.location.replace('onboarding.html');
+}
 
 sessionCountDisplay.textContent = sessionCount;
 updateQuickStats();
 loadTheme();
 loadAmbientSound();
 
-function showToast(message, duration = DEFAULT_TOAST_DURATION) {
+// Apply onboarding-chosen default session length
+const obDefault = getStorageValue('obDefaultSession', '');
+if (obDefault) {
+    presetBtns.forEach(btn => {
+        const isMatch = btn.dataset.minutes === obDefault;
+        btn.classList.toggle('active', isMatch);
+        if (isMatch) {
+            const mins = parseInt(obDefault, 10);
+            timeLeft = mins * 60;
+            totalTime = timeLeft;
+        }
+    });
+}
+
+function announce(message) {
+    if (!timerAnnouncer || !message) return;
+    timerAnnouncer.textContent = '';
+    requestAnimationFrame(() => { timerAnnouncer.textContent = message; });
+}
+
+function showToast(message, duration = DEFAULT_TOAST_DURATION, type = '') {
     if (!toastElement || !message) return;
     toastElement.textContent = message;
+    toastElement.className = 'app-toast';
+    if (type) toastElement.classList.add(`app-toast--${type}`);
     toastElement.classList.remove('hidden');
     if (toastTimer) clearTimeout(toastTimer);
     toastTimer = setTimeout(() => toastElement.classList.add('hidden'), duration);
+}
+
+function showSuccessToast(message, duration = DEFAULT_TOAST_DURATION) {
+    showToast(message, duration, 'success');
+}
+
+function showErrorToast(message, duration = LONG_TOAST_DURATION) {
+    showToast(message, duration, 'error');
 }
 
 function updateOnboardingState() {
@@ -100,12 +137,12 @@ function saveTask(task, options = {}) {
     const trimmedTask = (task || '').trim();
     if (!trimmedTask) return false;
     if (!setStorageValue('currentTask', trimmedTask)) return false;
-    activeTaskDisplay.textContent = `Current Focus: ${trimmedTask}`;
+    if (activeTaskDisplay) activeTaskDisplay.textContent = trimmedTask;
     if (focusTaskOverlay) {
         focusTaskOverlay.textContent = trimmedTask;
         focusTaskOverlay.classList.remove('hidden');
     }
-    if (!options.silent) showToast('Task saved on this device.');
+    if (!options.silent) showToast('Task saved.');
     return true;
 }
 
@@ -113,6 +150,10 @@ function updateDisplay() {
     const minutes = Math.floor(timeLeft / 60);
     const seconds = timeLeft % 60;
     timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    if (timerSubLabel) {
+        const totalMins = Math.round(totalTime / 60);
+        timerSubLabel.textContent = `of ${totalMins} minute${totalMins !== 1 ? 's' : ''}`;
+    }
     updateProgress();
 }
 
@@ -124,8 +165,8 @@ function updateProgress() {
 }
 
 function updateModeUI() {
-    modeLabel.textContent = isBreak ? '☕ Break Mode' : '🧠 Focus Mode';
-    modeToggle.textContent = isBreak ? 'Switch to Focus' : 'Switch to Break';
+    modeLabel.textContent = isBreak ? 'Break' : 'Focus session';
+    modeToggle.textContent = isBreak ? 'Back to focus' : 'Take a break';
 }
 
 function updateStartButtonLabel() {
@@ -134,7 +175,7 @@ function updateStartButtonLabel() {
     } else if (timeLeft < totalTime) {
         startBtn.textContent = 'Resume';
     } else {
-        startBtn.textContent = isBreak ? 'Start Break' : 'Start Focus';
+        startBtn.textContent = isBreak ? 'Start break' : 'Let\'s focus';
     }
 }
 
@@ -265,8 +306,8 @@ function createTextElement(tagName, className, text) {
 }
 
 function updateQuickStats() {
-    quickStreak.textContent = currentStreak;
-    quickLevel.textContent = userLevel;
+    if (quickStreak) quickStreak.textContent = currentStreak;
+    if (quickLevel) quickLevel.textContent = userLevel;
 }
 
 function switchMode() {
@@ -274,7 +315,7 @@ function switchMode() {
     resetTimer();
     timerDisplay.classList.toggle('break-mode', isBreak);
     document.querySelector('.timer-wrapper').classList.toggle('break-mode', isBreak);
-    modeLabel.parentElement.classList.toggle('break-mode', isBreak);
+    document.querySelector('.ring-column')?.classList.toggle('break-mode', isBreak);
     updateModeUI();
 
     if (isBreak) {
@@ -314,10 +355,13 @@ function startTimer() {
         return;
     }
 
+    announce(isBreak ? 'Break started.' : 'Focus session started.');
+
     timer = setInterval(() => {
         if (timeLeft > 0) {
             timeLeft -= 1;
             updateDisplay();
+            if (timeLeft === 300) announce('5 minutes remaining.');
             return;
         }
 
@@ -327,12 +371,24 @@ function startTimer() {
         playNotificationSound();
 
         if (isBreak) {
-            sendDesktopNotification('Break Over!', 'Time to get back to focus.');
+            announce('Break complete. Ready to focus?');
+            sendDesktopNotification('Break over', 'Time to get back to focus.');
             switchMode();
             return;
         }
 
-        sendDesktopNotification('Focus Complete!', 'Great job! Time for a break.');
+        announce('Focus session complete. Nice work!');
+        sendDesktopNotification('Session complete', 'Great work! Time for a break.');
+
+        // Show success banner
+        const banner = document.getElementById('session-banner');
+        const bannerText = document.getElementById('session-banner-text');
+        if (banner && bannerText) {
+            const msgs = ['Nice work today.', 'One session down.', 'That was solid focus.'];
+            bannerText.textContent = msgs[sessionCount % msgs.length];
+            banner.classList.remove('hidden');
+            setTimeout(() => banner.classList.add('hidden'), 4000);
+        }
         sessionCount += 1;
         setStorageValue('sessionCount', sessionCount);
         sessionCountDisplay.textContent = sessionCount;
@@ -347,6 +403,17 @@ function startTimer() {
             setStorageValue('currentStreak', currentStreak);
             setStorageValue('lastSessionDate', today);
         }
+
+        // Log session for dashboard heatmap
+        const sessionLog = getJsonFromStorage('sessionLog', []);
+        const activePresetForLog = document.querySelector('.preset-btn.active');
+        const logMins = activePresetForLog ? parseInt(activePresetForLog.dataset.minutes, 10) : Math.round(totalTime / 60);
+        sessionLog.push({
+            date: new Date().toISOString(),
+            task: getStorageValue('currentTask', ''),
+            durationMins: logMins
+        });
+        setStorageValue('sessionLog', JSON.stringify(sessionLog));
 
         addXP(50);
         checkBadges();
@@ -409,7 +476,7 @@ taskInput.addEventListener('blur', () => {
 
 const savedTask = getStorageValue('currentTask', '');
 if (savedTask) {
-    activeTaskDisplay.textContent = `Current Focus: ${savedTask}`;
+    if (activeTaskDisplay) activeTaskDisplay.textContent = savedTask;
     if (focusTaskOverlay) {
         focusTaskOverlay.textContent = savedTask;
         focusTaskOverlay.classList.remove('hidden');
@@ -495,15 +562,24 @@ function saveApiKey() {
 }
 
 function changeTheme(theme) {
-    document.body.className = `theme-${theme}`;
+    if (theme === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+    } else {
+        document.documentElement.removeAttribute('data-theme');
+    }
     setStorageValue('theme', theme);
     showToast(`Theme set to ${theme}.`);
 }
 
 function loadTheme() {
-    const savedTheme = getStorageValue('theme', 'dark');
-    document.body.className = `theme-${savedTheme}`;
-    document.getElementById('theme-select').value = savedTheme;
+    const savedTheme = getStorageValue('theme', 'light');
+    if (savedTheme === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+    } else {
+        document.documentElement.removeAttribute('data-theme');
+    }
+    const themeSelect = document.getElementById('theme-select');
+    if (themeSelect) themeSelect.value = savedTheme;
 }
 
 function changeAmbientSound(sound) {
@@ -574,7 +650,7 @@ async function sendChatMessage() {
     } catch (error) {
         removeMessageFromChat(loadingId);
         addMessageToChat('ai', 'Could not reach the AI coach. Try again in a moment.');
-        showToast('AI coach is temporarily unavailable.');
+        showErrorToast('AI coach is temporarily unavailable. Check your connection and try again.');
         console.error('Chat error:', error);
     }
 }
@@ -603,15 +679,14 @@ function handleChatKey(event) {
 }
 
 function renderSuggestionBox(text, buttonText) {
-    const suggestionBox = document.getElementById('ai-suggestion');
-    suggestionBox.replaceChildren();
-    suggestionBox.appendChild(createTextElement('p', '', text));
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.className = 'ask-ai-btn';
-    button.textContent = buttonText;
-    button.addEventListener('click', getAiSuggestion);
-    suggestionBox.appendChild(button);
+    const textEl = document.getElementById('ai-suggestion-text');
+    const btn = document.getElementById('ai-tip-btn');
+    if (textEl) textEl.textContent = text;
+    if (btn) {
+        const svg = btn.querySelector('svg');
+        btn.textContent = buttonText;
+        if (svg) btn.prepend(svg);
+    }
 }
 
 async function getAiSuggestion() {
@@ -634,8 +709,8 @@ async function getAiSuggestion() {
         const data = await response.json();
         renderSuggestionBox(data.suggestion || 'No suggestion received.', 'Ask Again');
     } catch (error) {
-        renderSuggestionBox('Could not get a suggestion right now. Try again in a moment.', 'Try Again');
-        showToast('Suggestion service is currently unavailable.');
+        renderSuggestionBox('Could not get a tip right now. Try again in a moment.', 'Try again');
+        showErrorToast('Could not reach the AI coach right now.');
         console.error('Suggestion error:', error);
     }
 }

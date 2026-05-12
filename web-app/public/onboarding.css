@@ -1,0 +1,206 @@
+/* StartShield — Onboarding flow */
+
+/* ── Shell ────────────────────────────────────────────────── */
+.ob-shell {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: var(--bg);
+  padding: var(--s-8) var(--s-6) var(--s-6);
+  position: relative;
+}
+
+/* ── Progress dots ────────────────────────────────────────── */
+.ob-progress {
+  display: flex;
+  gap: var(--s-2);
+  margin-bottom: var(--s-10);
+}
+
+.ob-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--r-pill);
+  border: none;
+  background: var(--border-strong);
+  padding: 0;
+  cursor: pointer;
+  transition: background 0.25s, width 0.25s;
+}
+
+.ob-dot.active {
+  width: 24px;
+  background: var(--sage);
+}
+
+.ob-dot:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+/* ── Steps ────────────────────────────────────────────────── */
+.ob-step {
+  display: none;
+  flex-direction: column;
+  flex: 1;
+  width: 100%;
+  max-width: 480px;
+  position: relative;
+}
+
+.ob-step.active {
+  display: flex;
+}
+
+.ob-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-5);
+}
+
+/* ── Back link ────────────────────────────────────────────── */
+.ob-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink-muted);
+  cursor: pointer;
+  margin-bottom: var(--s-6);
+  align-self: flex-start;
+  transition: color 0.15s;
+}
+
+.ob-back:hover {
+  color: var(--ink);
+}
+
+.ob-back:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+  border-radius: var(--r-sm);
+}
+
+/* ── Headlines ────────────────────────────────────────────── */
+.ob-headline {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: clamp(2.4rem, 8vw, 3.6rem);
+  font-weight: 400;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+.ob-headline-sm {
+  font-size: clamp(1.9rem, 6vw, 2.8rem);
+}
+
+.ob-headline em {
+  font-style: italic;
+  color: var(--sage-deep);
+}
+
+.ob-body {
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.55;
+  color: var(--ink-muted);
+  max-width: 36ch;
+}
+
+/* ── Chip groups ──────────────────────────────────────────── */
+.ob-chip-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-3);
+}
+
+.ob-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 48px;
+  padding: 0 20px;
+  border-radius: var(--r-pill);
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  color: var(--ink-2);
+  font-family: var(--sans);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+  box-shadow: var(--shadow-xs);
+}
+
+.ob-chip:hover {
+  background: var(--surface-2);
+  border-color: var(--border-strong);
+}
+
+.ob-chip.active,
+.ob-chip[aria-checked="true"] {
+  background: var(--sage-tint);
+  border-color: var(--sage-soft);
+  color: var(--sage-deep);
+}
+
+.ob-chip:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+/* ── Text input ───────────────────────────────────────────── */
+.ob-input {
+  width: 100%;
+  min-height: 56px;
+  padding: 0 var(--s-5);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-lg);
+  font-size: 17px;
+  font-family: var(--sans);
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: var(--shadow-xs);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.ob-input::placeholder {
+  color: var(--ink-soft);
+}
+
+.ob-input:focus {
+  outline: none;
+  border-color: var(--sage);
+  box-shadow: var(--shadow-focus);
+}
+
+/* ── Footer ───────────────────────────────────────────────── */
+.ob-footer {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--s-2);
+  margin-top: var(--s-10);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.ob-cta {
+  width: 100%;
+  font-size: 17px;
+  min-height: 56px;
+  justify-content: center;
+}
+
+.ob-skip {
+  align-self: center;
+  font-size: 14px;
+  color: var(--ink-soft);
+}

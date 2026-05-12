@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com; font-src https://fonts.gstatic.com; script-src 'self' 'unsafe-inline'; connect-src 'self' https://api.mistral.ai;">
+    <title>StartShield — Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@500;600&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="tasks.css">
+</head>
+<body>
+    <!-- Toast -->
+    <div id="app-toast" class="app-toast hidden" role="status" aria-live="polite" aria-atomic="true"></div>
+
+    <div class="app-shell">
+
+        <!-- Top bar -->
+        <header class="topbar">
+            <div class="topbar-brand">
+                <a href="index.html" class="topbar-wordmark topbar-link" aria-label="Back to focus screen">StartShield</a>
+                <span class="topbar-eyebrow">Dashboard</span>
+            </div>
+            <div class="topbar-actions">
+                <a href="index.html" class="icon-btn" aria-label="Go to focus screen" title="Focus">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                </a>
+            </div>
+        </header>
+
+        <!-- Hero -->
+        <div class="dash-hero">
+            <p class="session-eyebrow" id="today-date"></p>
+            <h2 class="dash-headline">
+                <em>Today</em> at a glance.
+            </h2>
+        </div>
+
+        <!-- Stat row -->
+        <div class="stat-row" role="list" aria-label="Today's stats">
+            <div class="stat-tile" role="listitem">
+                <div class="stat-tile-num" id="dash-streak">0</div>
+                <div class="stat-tile-label">Day streak</div>
+            </div>
+            <div class="stat-tile" role="listitem">
+                <div class="stat-tile-num" id="dash-week-sessions">0</div>
+                <div class="stat-tile-label">Sessions this week</div>
+            </div>
+            <div class="stat-tile" role="listitem">
+                <div class="stat-tile-num" id="dash-focus-time">0 min</div>
+                <div class="stat-tile-label">Focus time today</div>
+            </div>
+            <div class="stat-tile" role="listitem">
+                <div class="stat-tile-num" id="dash-level">1</div>
+                <div class="stat-tile-label">Level</div>
+            </div>
+        </div>
+
+        <!-- Today's plan -->
+        <section class="plan-section card" aria-labelledby="plan-heading">
+            <div class="plan-header">
+                <h3 id="plan-heading" class="plan-title">Today's plan</h3>
+                <button type="button" class="btn-set" id="add-task-btn" onclick="showAddTask()">+ Add task</button>
+            </div>
+
+            <!-- Add task form (hidden by default) -->
+            <form id="add-task-form" class="add-task-form hidden" onsubmit="addTask(event)">
+                <input type="text" id="new-task-input" class="dash-input" placeholder="What needs to get done?" aria-label="New task" autocomplete="off" required>
+                <button type="submit" class="btn-set">Add</button>
+                <button type="button" class="btn-quiet" onclick="hideAddTask()">Cancel</button>
+            </form>
+
+            <ul id="task-list" class="task-list" aria-label="Today's tasks">
+                <!-- populated by JS -->
+            </ul>
+
+            <!-- Empty state -->
+            <div id="task-empty" class="task-empty hidden" aria-live="polite">
+                <p class="task-empty-headline">Nothing on the plan yet.</p>
+                <p class="task-empty-sub">Add your first task to get started.</p>
+                <button type="button" class="btn-set" onclick="showAddTask()">Add your first task</button>
+            </div>
+        </section>
+
+        <!-- AI nudge -->
+        <div class="ai-nudge card-tint" id="ai-nudge">
+            <div class="ai-nudge-inner">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+                <p>Want me to break a big task into smaller steps?</p>
+                <a href="index.html#ai-tip" class="btn-ai-tip">Try it</a>
+            </div>
+        </div>
+
+        <!-- Heatmap + recent sessions -->
+        <div class="history-row">
+
+            <!-- 8-week heatmap -->
+            <section class="heatmap-section card" aria-labelledby="heatmap-heading">
+                <h3 id="heatmap-heading" class="plan-title">Focus activity</h3>
+                <div class="heatmap-grid" id="heatmap-grid" aria-label="8-week focus heatmap" role="img"></div>
+                <div class="heatmap-legend">
+                    <span class="legend-label">Less</span>
+                    <div class="legend-cells">
+                        <div class="heatmap-cell" data-level="0"></div>
+                        <div class="heatmap-cell" data-level="1"></div>
+                        <div class="heatmap-cell" data-level="2"></div>
+                        <div class="heatmap-cell" data-level="3"></div>
+                    </div>
+                    <span class="legend-label">More</span>
+                </div>
+            </section>
+
+            <!-- Recent sessions -->
+            <section class="recent-section card" aria-labelledby="recent-heading">
+                <h3 id="recent-heading" class="plan-title">Recent sessions</h3>
+                <ul id="recent-list" class="recent-list" aria-label="Recent focus sessions">
+                    <!-- populated by JS -->
+                </ul>
+                <p id="recent-empty" class="task-empty-sub hidden">No sessions yet. Complete your first focus session!</p>
+            </section>
+
+        </div>
+
+    </div><!-- /app-shell -->
+
+    <script src="tasks.js"></script>
+</body>
+</html>

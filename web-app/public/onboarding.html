@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com; font-src https://fonts.gstatic.com; script-src 'self' 'unsafe-inline';">
+    <title>StartShield — Welcome</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@500;600&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="onboarding.css">
+</head>
+<body>
+    <div class="ob-shell">
+
+        <!-- Progress dots -->
+        <nav class="ob-progress" aria-label="Setup progress">
+            <button class="ob-dot active" aria-label="Step 1: Welcome" data-step="0" onclick="goToStep(0)"></button>
+            <button class="ob-dot" aria-label="Step 2: About you" data-step="1" onclick="goToStep(1)"></button>
+            <button class="ob-dot" aria-label="Step 3: Rhythm" data-step="2" onclick="goToStep(2)"></button>
+            <button class="ob-dot" aria-label="Step 4: First task" data-step="3" onclick="goToStep(3)"></button>
+        </nav>
+
+        <!-- ── Step 0: Welcome ─────────────────────────────── -->
+        <div class="ob-step active" id="step-0" role="region" aria-labelledby="step-0-heading">
+            <div class="ob-content">
+                <h1 id="step-0-heading" class="ob-headline">
+                    Hey, glad<br>you're here.
+                </h1>
+                <p class="ob-body">
+                    StartShield helps you get started on what matters —
+                    one focused session at a time. It's calm, it's simple,
+                    and it works with the way your brain actually works.
+                </p>
+            </div>
+            <div class="ob-footer">
+                <button type="button" class="btn-start ob-cta" onclick="goToStep(1)">
+                    Let's begin
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- ── Step 1: About you ───────────────────────────── -->
+        <div class="ob-step" id="step-1" role="region" aria-labelledby="step-1-heading">
+            <button class="ob-back" onclick="goToStep(0)" aria-label="Back to welcome">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+                Back
+            </button>
+            <div class="ob-content">
+                <h2 id="step-1-heading" class="ob-headline ob-headline-sm">
+                    What slows you<br>down most?
+                </h2>
+                <p class="ob-body">Select all that apply.</p>
+                <div class="ob-chip-group" id="friction-chips" role="group" aria-label="Focus friction points">
+                    <button type="button" class="ob-chip" data-value="starting">Getting started</button>
+                    <button type="button" class="ob-chip" data-value="switching">Task switching</button>
+                    <button type="button" class="ob-chip" data-value="distractions">Distractions</button>
+                    <button type="button" class="ob-chip" data-value="finishing">Following through</button>
+                </div>
+            </div>
+            <div class="ob-footer">
+                <button type="button" class="btn-quiet ob-skip" onclick="goToStep(2)">Skip</button>
+                <button type="button" class="btn-start ob-cta" onclick="saveFriction()">
+                    Continue
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- ── Step 2: Rhythm ─────────────────────────────── -->
+        <div class="ob-step" id="step-2" role="region" aria-labelledby="step-2-heading">
+            <button class="ob-back" onclick="goToStep(1)" aria-label="Back to about you">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+                Back
+            </button>
+            <div class="ob-content">
+                <h2 id="step-2-heading" class="ob-headline ob-headline-sm">
+                    Pick a default<br>session length.
+                </h2>
+                <p class="ob-body">You can always change it before any session.</p>
+                <div class="ob-chip-group" id="rhythm-chips" role="radiogroup" aria-label="Default session length">
+                    <button type="button" class="ob-chip ob-chip-radio" role="radio" aria-checked="false" data-value="15">15 min</button>
+                    <button type="button" class="ob-chip ob-chip-radio active" role="radio" aria-checked="true" data-value="25">25 min</button>
+                    <button type="button" class="ob-chip ob-chip-radio" role="radio" aria-checked="false" data-value="50">50 min</button>
+                    <button type="button" class="ob-chip ob-chip-radio" role="radio" aria-checked="false" data-value="90">90 min</button>
+                </div>
+            </div>
+            <div class="ob-footer">
+                <button type="button" class="btn-quiet ob-skip" onclick="goToStep(3)">Skip</button>
+                <button type="button" class="btn-start ob-cta" onclick="saveRhythm()">
+                    Continue
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- ── Step 3: First task ──────────────────────────── -->
+        <div class="ob-step" id="step-3" role="region" aria-labelledby="step-3-heading">
+            <button class="ob-back" onclick="goToStep(2)" aria-label="Back to rhythm">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+                Back
+            </button>
+            <div class="ob-content">
+                <h2 id="step-3-heading" class="ob-headline ob-headline-sm">
+                    What's one thing<br>you want to do <em>today</em>?
+                </h2>
+                <p class="ob-body">Just one. You can always add more later.</p>
+                <input
+                    type="text"
+                    id="first-task-input"
+                    class="ob-input"
+                    placeholder="e.g. Draft the intro paragraph"
+                    aria-label="Your first task"
+                    autocomplete="off"
+                    onkeypress="handleTaskKey(event)"
+                >
+            </div>
+            <div class="ob-footer">
+                <button type="button" class="btn-quiet ob-skip" onclick="finishOnboarding()">Skip</button>
+                <button type="button" class="btn-start ob-cta" onclick="saveFirstTask()">
+                    Save and start
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                </button>
+            </div>
+        </div>
+
+    </div><!-- /ob-shell -->
+    <script src="onboarding.js"></script>
+</body>
+</html>
