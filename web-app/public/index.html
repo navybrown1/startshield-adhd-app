@@ -17,7 +17,7 @@
     <div id="settings-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="settings-modal-title" aria-hidden="true">
         <div class="modal-content" tabindex="-1">
             <div class="modal-header">
-                <h2 id="settings-modal-title">⚙️ Settings</h2>
+                <h2 id="settings-modal-title">Settings</h2>
                 <button type="button" class="close-btn" aria-label="Close settings" onclick="closeModal('settings-modal')">&times;</button>
             </div>
             <div class="modal-body">
@@ -65,7 +65,7 @@
     <div id="ai-coach-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="ai-modal-title" aria-hidden="true">
         <div class="modal-content ai-coach-content" tabindex="-1">
             <div class="modal-header">
-                <h2 id="ai-modal-title">🤖 AI Focus Coach</h2>
+                <h2 id="ai-modal-title">AI Focus Coach</h2>
                 <button type="button" class="close-btn" aria-label="Close AI coach" onclick="closeModal('ai-coach-modal')">&times;</button>
             </div>
             <div class="modal-body ai-chat-body">
@@ -86,7 +86,7 @@
     <div id="stats-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="stats-modal-title" aria-hidden="true">
         <div class="modal-content" tabindex="-1">
             <div class="modal-header">
-                <h2 id="stats-modal-title">📊 Your Progress</h2>
+                <h2 id="stats-modal-title">Your Progress</h2>
                 <button type="button" class="close-btn" aria-label="Close progress modal" onclick="closeModal('stats-modal')">&times;</button>
             </div>
             <div class="modal-body stats-body">
@@ -114,7 +114,7 @@
                 </div>
                 
                 <div class="badges-section">
-                    <h3>🏆 Badges Earned</h3>
+                    <h3>Badges earned</h3>
                     <div id="badges-container" class="badges-container">
                         <p class="no-badges">Complete sessions to earn badges!</p>
                     </div>
@@ -134,20 +134,26 @@
     <div class="container" role="main">
         <header>
             <div class="header-top">
-                <h1>StartShield</h1>
+                <div class="header-wordmark">
+                    <h1>StartShield</h1>
+                    <p class="header-eyebrow">Focus</p>
+                </div>
                 <div class="header-actions">
-                    <button type="button" class="icon-btn" aria-label="View stats" aria-haspopup="dialog" aria-controls="stats-modal" onclick="openModal('stats-modal')" title="View Stats">📊</button>
-                    <button type="button" class="icon-btn" aria-label="Open settings" aria-haspopup="dialog" aria-controls="settings-modal" onclick="openModal('settings-modal')" title="Settings">⚙️</button>
+                    <button type="button" class="icon-btn" aria-label="View progress" aria-haspopup="dialog" aria-controls="stats-modal" onclick="openModal('stats-modal')" title="Progress">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+                    </button>
+                    <button type="button" class="icon-btn" aria-label="Open settings" aria-haspopup="dialog" aria-controls="settings-modal" onclick="openModal('settings-modal')" title="Settings">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                    </button>
                 </div>
             </div>
-            <p>Your AI-Powered Focus Guardian</p>
             <div id="onboarding-card" class="onboarding-card hidden" role="note">
-                <p><strong>Quick start:</strong> Add a task, press <em>Start Focus</em>, then open ⚙️ to save your AI key and preferences.</p>
-                <button type="button" id="dismiss-onboarding" class="secondary-btn">Got it</button>
+                <p>Add a task below, then press <em>Let's focus</em> to start. Open settings to save your AI key.</p>
+                <button type="button" id="dismiss-onboarding" class="btn-quiet">Got it</button>
             </div>
             <div class="quick-stats">
-                <span class="quick-stat">🔥 <span id="quick-streak">0</span> day streak</span>
-                <span class="quick-stat">⭐ Level <span id="quick-level">1</span></span>
+                <span class="quick-stat"><span id="quick-streak">0</span>-day streak</span>
+                <span class="quick-stat">Level <span id="quick-level">1</span></span>
             </div>
         </header>
         
@@ -166,41 +172,40 @@
             </div>
             
             <div class="controls">
-                <button type="button" id="start-btn">Start Focus</button>
+                <button type="button" id="start-btn">Let's focus</button>
                 <button type="button" id="reset-btn">Reset</button>
             </div>
-            
+
             <div class="mode-toggle-wrapper">
-                <button type="button" id="mode-toggle" class="secondary-btn">Switch to Break</button>
+                <button type="button" id="mode-toggle" class="btn-quiet">Take a break</button>
             </div>
         </section>
         
         <div class="bottom-sections">
             <section id="task-section">
-                <h3 class="section-header">Current Task</h3>
+                <h3 class="section-header">One thing at a time</h3>
                 <div class="task-input-wrapper">
-                    <input type="text" id="task-input" placeholder="What are you focusing on?" aria-label="Current focus task">
-                    <button type="button" id="set-task-btn">Save</button>
+                    <input type="text" id="task-input" placeholder="What's the very next step?" aria-label="Current focus task">
+                    <button type="button" id="set-task-btn">Set</button>
                 </div>
-                <p class="setting-hint">Task saves automatically when you press Enter or start the timer.</p>
                 <p id="active-task-display" aria-live="polite"></p>
             </section>
 
             <section id="duration-section">
-                <h3 class="section-header">Focus Presets</h3>
+                <h3 class="section-header">Session length</h3>
                 <div class="preset-group">
-                    <button type="button" class="preset-btn" data-minutes="15">15m</button>
-                    <button type="button" class="preset-btn active" data-minutes="25">25m</button>
-                    <button type="button" class="preset-btn" data-minutes="50">50m</button>
-                    <button type="button" class="preset-btn" data-minutes="90">90m</button>
+                    <button type="button" class="preset-btn" data-minutes="15">15 min</button>
+                    <button type="button" class="preset-btn active" data-minutes="25">25 min</button>
+                    <button type="button" class="preset-btn" data-minutes="50">50 min</button>
+                    <button type="button" class="preset-btn" data-minutes="90">90 min</button>
                 </div>
             </section>
-            
+
             <section id="ai-suggestion-section">
-                <h3 class="section-header">💡 AI Suggestion</h3>
+                <h3 class="section-header">Feeling stuck?</h3>
                 <div id="ai-suggestion" class="ai-suggestion-box">
-                    <p>Click "Ask AI" for personalized focus tips!</p>
-                    <button type="button" class="ask-ai-btn" onclick="getAiSuggestion()">Ask AI Coach</button>
+                    <p>Let the coach break this down into smaller steps.</p>
+                    <button type="button" class="ask-ai-btn" onclick="getAiSuggestion()">Get a tip</button>
                 </div>
             </section>
 

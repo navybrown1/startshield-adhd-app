@@ -124,8 +124,8 @@ function updateProgress() {
 }
 
 function updateModeUI() {
-    modeLabel.textContent = isBreak ? '☕ Break Mode' : '🧠 Focus Mode';
-    modeToggle.textContent = isBreak ? 'Switch to Focus' : 'Switch to Break';
+    modeLabel.textContent = isBreak ? 'Break' : 'Focus session';
+    modeToggle.textContent = isBreak ? 'Back to focus' : 'Take a break';
 }
 
 function updateStartButtonLabel() {
@@ -134,7 +134,7 @@ function updateStartButtonLabel() {
     } else if (timeLeft < totalTime) {
         startBtn.textContent = 'Resume';
     } else {
-        startBtn.textContent = isBreak ? 'Start Break' : 'Start Focus';
+        startBtn.textContent = isBreak ? 'Start break' : 'Let\'s focus';
     }
 }
 
