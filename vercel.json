@@ -1,6 +1,4 @@
 {
-  "installCommand": "npm ci --omit=dev --no-audit --no-fund",
-  "buildCommand": "npm run build",
-  "outputDirectory": "dist",
+  "outputDirectory": "web-app/public",
   "cleanUrls": true
 }
