@@ -82,15 +82,56 @@ body {
     border-color: rgba(255, 255, 255, 0.52) !important;
 }
 
-/* ── Timer ring — lighter track so it reads over the video ─── */
+/* ── Timer number and sub-label ─────────────────────────────── */
+#timer-display {
+    color: rgba(255, 255, 255, 0.96) !important;
+    text-shadow: 0 2px 20px rgba(0, 0, 0, 0.45);
+}
+
+.timer-sub {
+    color: rgba(255, 255, 255, 0.55) !important;
+}
+
+/* ── Timer ring — teal gradient fill, teal track ─────────────── */
 .progress-ring-circle-bg {
-    stroke: rgba(255, 255, 255, 0.20) !important;
+    stroke: rgba(184, 243, 225, 0.20) !important;
+}
+
+.progress-circle {
+    stroke: url(#ring-gradient) !important;
 }
 
 /* ── Mode label below the ring ──────────────────────────────── */
-.mode-indicator,
 #mode-label {
-    color: rgba(255, 255, 255, 0.72) !important;
+    background: rgba(184, 243, 225, 0.14) !important;
+    border-color: rgba(184, 243, 225, 0.32) !important;
+    color: rgba(184, 243, 225, 0.88) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+}
+
+/* ── SESSION LENGTH eyebrow (outside glass cards) ───────────── */
+.duration-block .block-eyebrow {
+    color: rgba(255, 255, 255, 0.55) !important;
+}
+
+/* ── End early + Take a break (bare btns over video) ─────────── */
+.end-early-btn {
+    color: rgba(255, 255, 255, 0.65) !important;
+}
+
+.end-early-btn:hover {
+    color: rgba(255, 255, 255, 0.95) !important;
+    background: rgba(255, 255, 255, 0.10) !important;
+}
+
+.mode-toggle-wrapper .btn-quiet {
+    color: rgba(255, 255, 255, 0.58) !important;
+}
+
+.mode-toggle-wrapper .btn-quiet:hover {
+    color: rgba(255, 255, 255, 0.90) !important;
+    background: rgba(255, 255, 255, 0.10) !important;
 }
 
 /* ── Onboarding card ─────────────────────────────────────────── */
