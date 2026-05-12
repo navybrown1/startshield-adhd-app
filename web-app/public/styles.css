@@ -237,8 +237,8 @@ a.icon-btn {
 
 .progress-ring-circle-bg {
   fill: transparent;
-  stroke: var(--surface-sunk);
-  stroke-width: 4;
+  stroke: var(--border);
+  stroke-width: 6;
 }
 
 .progress-circle {
@@ -1267,8 +1267,8 @@ a.icon-btn {
 
 .progress-ring-circle-bg {
   fill: transparent;
-  stroke: var(--surface-sunk);
-  stroke-width: 4;
+  stroke: var(--border);
+  stroke-width: 6;
 }
 
 .progress-circle {
