@@ -2,7 +2,7 @@ export default async function handler(req, res) {
   // Enable CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-API-Key');
 
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
@@ -15,11 +15,11 @@ export default async function handler(req, res) {
   try {
     const { context = {} } = req.body;
 
-    const apiKey = process.env.MISTRAL_API_KEY;
-    
+    const apiKey = req.headers['x-api-key'] || process.env.MISTRAL_API_KEY;
+
     if (!apiKey) {
-      return res.status(500).json({ 
-        error: 'Mistral API key not configured' 
+      return res.status(500).json({
+        error: 'No Mistral API key found. Enter your key in Settings.'
       });
     }
 

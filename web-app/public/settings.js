@@ -2,7 +2,7 @@
 
 let ambientAudio = null;
 let toastTimer   = null;
-let sessionApiKey = '';
+let sessionApiKey = sessionStorage.getItem('mistralApiKey') || '';
 
 // ── Storage helpers ────────────────────────────────────────
 function getStorageValue(key, fallback = '') {
@@ -72,6 +72,8 @@ function saveApiKey() {
         return;
     }
     sessionApiKey = key;
+    if (key) sessionStorage.setItem('mistralApiKey', key);
+    else sessionStorage.removeItem('mistralApiKey');
     showToast(key ? 'Key saved for this session.' : 'Key cleared.');
 }
 
@@ -111,4 +113,7 @@ if (notifToggle) {
         notifToggle.checked = notifs;
         notifToggle.setAttribute('aria-checked', String(notifs));
     }
+
+    const apiKeyEl = document.getElementById('api-key-input');
+    if (apiKeyEl && sessionApiKey) apiKeyEl.value = sessionApiKey;
 })();
