@@ -65,7 +65,6 @@ body {
     overflow: hidden;
 }
 
-.harmony-video,
 .harmony-poster,
 .harmony-overlay,
 .harmony-grain {
@@ -75,30 +74,46 @@ body {
     height: 100%;
 }
 
-.harmony-video {
-    z-index: -5;
-    object-fit: cover;
-    opacity: 0.88;
-    transform: scale(1.02);
-    filter: saturate(0.88) contrast(0.96) brightness(0.78);
-    transition: opacity 900ms ease, transform 4500ms ease;
-}
-
-.video-ready .harmony-video {
-    opacity: 0.92;
-    transform: scale(1);
-}
-
-.video-fallback .harmony-video {
-    opacity: 0;
-}
-
 .harmony-poster {
     z-index: -6;
     background:
         radial-gradient(circle at 18% 18%, rgba(201, 252, 230, 0.32), transparent 26rem),
         radial-gradient(circle at 78% 72%, rgba(139, 216, 198, 0.26), transparent 30rem),
         linear-gradient(135deg, #0e2a27 0%, #1d3c35 42%, #071414 100%);
+}
+
+.harmony-poster::before,
+.harmony-poster::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+}
+
+.harmony-poster::before {
+    background:
+        radial-gradient(ellipse 80% 60% at 20% 30%, rgba(184, 243, 225, 0.22), transparent),
+        radial-gradient(ellipse 60% 80% at 75% 65%, rgba(100, 200, 170, 0.18), transparent);
+    animation: mistDrift 18s ease-in-out infinite alternate;
+}
+
+.harmony-poster::after {
+    background:
+        radial-gradient(ellipse 50% 40% at 60% 20%, rgba(217, 234, 216, 0.14), transparent),
+        radial-gradient(ellipse 70% 50% at 35% 75%, rgba(139, 216, 198, 0.16), transparent);
+    animation: mistDrift 26s ease-in-out infinite alternate-reverse;
+}
+
+@keyframes mistDrift {
+    0%   { transform: translate(0, 0) scale(1); opacity: 0.7; }
+    33%  { transform: translate(3%, 2%) scale(1.04); opacity: 1; }
+    66%  { transform: translate(-2%, 4%) scale(1.02); opacity: 0.85; }
+    100% { transform: translate(4%, -2%) scale(1.06); opacity: 1; }
+}
+
+.motion-paused .harmony-poster::before,
+.motion-paused .harmony-poster::after {
+    animation-play-state: paused;
 }
 
 .harmony-overlay {
@@ -261,30 +276,7 @@ body {
     outline-offset: 4px;
 }
 
-.harmony-status {
-    position: absolute;
-    right: clamp(1rem, 2vw, 2rem);
-    bottom: clamp(1rem, 2vw, 2rem);
-    max-width: min(22rem, calc(100% - 2rem));
-    padding: 0.7rem 0.9rem;
-    border: 1px solid rgba(255, 255, 255, 0.16);
-    border-radius: 999px;
-    background: rgba(0, 0, 0, 0.22);
-    color: var(--ink-muted);
-    font-size: 0.78rem;
-    backdrop-filter: blur(16px);
-}
 
-.video-ready .harmony-status {
-    opacity: 0;
-    transform: translateY(0.5rem);
-    pointer-events: none;
-    transition: opacity 320ms ease, transform 320ms ease;
-}
-
-.motion-paused .harmony-video {
-    opacity: 0.35;
-}
 
 @keyframes breatheIn {
     from {
@@ -343,11 +335,8 @@ body {
         scroll-behavior: auto !important;
     }
 
-    .harmony-video {
-        display: none;
-    }
-
-    .harmony-status {
-        display: none;
+    .harmony-poster::before,
+    .harmony-poster::after {
+        animation: none;
     }
 }
