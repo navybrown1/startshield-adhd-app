@@ -261,51 +261,6 @@ a.icon-btn {
   stroke: var(--warm);
 }
 
-#timer-display {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-family: var(--mono);
-  font-size: clamp(3.1rem, 7vw, 4.3rem);
-  font-weight: 600;
-  color: var(--ink);
-  letter-spacing: -0.04em;
-  font-variant-numeric: tabular-nums;
-  transition: color 0.3s ease;
-}
-
-#timer-display.break-mode {
-  color: var(--warm);
-}
-
-.mode-indicator {
-  margin: 0;
-}
-
-#mode-label {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 32px;
-  background: var(--surface-2);
-  border: 1px solid var(--border);
-  padding: 0.42rem 1.1rem;
-  border-radius: var(--r-pill);
-  font-size: 0.77rem;
-  font-weight: 700;
-  color: var(--ink-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  transition: background 0.3s, color 0.3s;
-}
-
-.break-mode #mode-label {
-  background: var(--warm-soft);
-  border-color: var(--warm);
-  color: var(--warm);
-}
-
 /* ============================================================
    BUTTON PRIMITIVES
    ============================================================ */
@@ -913,26 +868,6 @@ a.icon-btn {
   margin: 0;
   color: rgba(255, 255, 255, 0.9);
   font-size: 0.85rem;
-}
-
-/* ============================================================
-   FOCUS TASK OVERLAY
-   ============================================================ */
-.focus-task-overlay {
-  position: absolute;
-  bottom: -30px;
-  left: 0;
-  right: 0;
-  text-align: center;
-  font-size: 0.85rem;
-  color: var(--ink-muted);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.focus-task-overlay:not(.hidden) {
-  display: block;
 }
 
 /* ============================================================
@@ -1613,15 +1548,19 @@ a.icon-btn {
   border-width: 0;
 }
 
-/* Focus task overlay inside ring */
+/* Focus task overlay inside ring — above the timer */
 .focus-task-overlay {
   position: absolute;
-  bottom: -28px;
-  left: 0;
-  right: 0;
+  top: 28%;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: 70%;
   text-align: center;
   font-size: 12px;
-  color: var(--ink-muted);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--sage-deep);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
