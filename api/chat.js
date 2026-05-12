@@ -28,7 +28,7 @@ export default async function handler(req, res) {
     }
 
     // Build system prompt based on context
-    let systemPrompt = 'You are an AI Focus Coach for StartShield, an ADHD productivity app. Your role is to help users stay focused, motivated, and productive. Be encouraging, concise, and practical. Provide actionable tips for managing ADHD-related focus challenges.';
+    let systemPrompt = 'You are an AI Focus Coach for StartShield, an ADHD productivity app. Your role is to help users stay focused, motivated, and productive. Be encouraging, concise, and practical. Provide actionable tips for managing ADHD-related focus challenges. Respond in plain prose only — no markdown, no asterisks, no bullet lists, no headings, no emoji.';
     
     if (context.task) {
       systemPrompt += `\n\nUser's current task: ${context.task}`;
