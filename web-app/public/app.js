@@ -79,10 +79,29 @@ const dismissOnboardingBtn = document.getElementById('dismiss-onboarding');
 const timerSubLabel = document.getElementById('timer-sub-label');
 const timerAnnouncer = document.getElementById('timer-announcer');
 
+// Redirect to onboarding if never completed
+if (getStorageValue('startshieldOnboardingDismissed', 'false') !== 'true') {
+    window.location.replace('onboarding.html');
+}
+
 sessionCountDisplay.textContent = sessionCount;
 updateQuickStats();
 loadTheme();
 loadAmbientSound();
+
+// Apply onboarding-chosen default session length
+const obDefault = getStorageValue('obDefaultSession', '');
+if (obDefault) {
+    presetBtns.forEach(btn => {
+        const isMatch = btn.dataset.minutes === obDefault;
+        btn.classList.toggle('active', isMatch);
+        if (isMatch) {
+            const mins = parseInt(obDefault, 10);
+            timeLeft = mins * 60;
+            totalTime = timeLeft;
+        }
+    });
+}
 
 function announce(message) {
     if (!timerAnnouncer || !message) return;
