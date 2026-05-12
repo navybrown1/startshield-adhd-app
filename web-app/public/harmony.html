@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0f1f1d">
+    <meta name="description" content="A calm StartShield landing page with an immersive breeze-inspired video hero for focus and relaxation.">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; script-src 'self'; media-src https://videos.pexels.com; img-src 'self' data:; connect-src 'self';">
+    <title>StartShield Harmony</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://videos.pexels.com">
+    <link rel="preload" href="assets/harmony-poster.svg" as="image" type="image/svg+xml">
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="harmony.css">
+    <script src="harmony.js" defer></script>
+</head>
+<body>
+    <a href="#harmony-actions" class="skip-link">Skip to actions</a>
+
+    <main class="harmony-page" aria-labelledby="harmony-title">
+        <section class="harmony-hero" aria-label="Harmony and relaxation hero">
+            <video class="harmony-video" autoplay muted loop playsinline preload="metadata" poster="assets/harmony-poster.svg" aria-hidden="true" data-harmony-video>
+                <source src="https://videos.pexels.com/video-files/4427479/4427479-hd_1080_1920_30fps.mp4" type="video/mp4">
+            </video>
+            <div class="harmony-poster" aria-hidden="true"></div>
+            <div class="harmony-overlay" aria-hidden="true"></div>
+            <div class="harmony-grain" aria-hidden="true"></div>
+
+            <nav class="harmony-nav" aria-label="Harmony page navigation">
+                <a class="harmony-brand" href="index.html" aria-label="Back to StartShield home">StartShield</a>
+                <a class="harmony-nav-link" href="tasks.html">Tasks</a>
+            </nav>
+
+            <div class="harmony-copy">
+                <p class="harmony-eyebrow">Harmony mode</p>
+                <h1 id="harmony-title">Let the air slow you down.</h1>
+                <p class="harmony-subtitle">A soft entry point before focus. Gentle motion, clean typography, and just enough structure to help your nervous system unclench.</p>
+
+                <div id="harmony-actions" class="harmony-actions" aria-label="Primary actions">
+                    <a class="harmony-cta harmony-cta-primary" href="index.html#main-content">Begin calm focus</a>
+                    <button class="harmony-cta harmony-cta-ghost" type="button" data-motion-toggle aria-pressed="false">Pause motion</button>
+                </div>
+            </div>
+
+            <div class="harmony-status" role="status" aria-live="polite" data-video-status>Loading soft motion...</div>
+        </section>
+    </main>
+</body>
+</html>
