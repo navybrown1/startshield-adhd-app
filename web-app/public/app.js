@@ -592,10 +592,10 @@ function changeAmbientSound(sound) {
 
     if (sound !== 'none') {
         const soundFiles = {
-            rain: 'https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf09a.mp3',
-            cafe: 'https://cdn.pixabay.com/download/audio/2022/03/10/audio_c8c8a73467.mp3',
-            'white-noise': 'https://cdn.pixabay.com/download/audio/2022/03/24/audio_c610232532.mp3',
-            forest: 'https://cdn.pixabay.com/download/audio/2021/09/06/audio_07d7e50e9e.mp3'
+            rain: 'https://cdn.freesound.org/previews/346/346770_1676145-lq.mp3',
+            cafe: 'https://cdn.freesound.org/previews/517/517024_11152023-lq.mp3',
+            'white-noise': 'https://cdn.freesound.org/previews/243/243981_4062552-lq.mp3',
+            forest: 'https://cdn.freesound.org/previews/476/476581_9961118-lq.mp3'
         };
         ambientAudio = new Audio(soundFiles[sound]);
         ambientAudio.loop = true;
