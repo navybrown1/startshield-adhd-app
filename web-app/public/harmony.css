@@ -1,0 +1,346 @@
+:root {
+    color-scheme: dark;
+    --ink: #f7fbf7;
+    --ink-soft: rgba(247, 251, 247, 0.78);
+    --ink-muted: rgba(247, 251, 247, 0.58);
+    --glass: rgba(255, 255, 255, 0.1);
+    --glass-strong: rgba(255, 255, 255, 0.18);
+    --border: rgba(255, 255, 255, 0.22);
+    --shadow: 0 24px 80px rgba(0, 0, 0, 0.38);
+    --aqua: #b8f3e1;
+    --sage: #d9ead8;
+    --deep: #0f1f1d;
+    --font-display: "Instrument Serif", Georgia, serif;
+    --font-body: "Manrope", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    min-height: 100%;
+    margin: 0;
+}
+
+body {
+    background: var(--deep);
+    color: var(--ink);
+    font-family: var(--font-body);
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: geometricPrecision;
+}
+
+.skip-link {
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    z-index: 20;
+    transform: translateY(-150%);
+    background: rgba(255, 255, 255, 0.92);
+    color: #10231f;
+    padding: 0.7rem 0.9rem;
+    border-radius: 999px;
+    text-decoration: none;
+    font-weight: 700;
+}
+
+.skip-link:focus {
+    transform: translateY(0);
+}
+
+.harmony-page {
+    min-height: 100vh;
+}
+
+.harmony-hero {
+    position: relative;
+    min-height: 100svh;
+    display: grid;
+    align-items: center;
+    padding: clamp(1.2rem, 2vw, 2rem);
+    isolation: isolate;
+    overflow: hidden;
+}
+
+.harmony-video,
+.harmony-poster,
+.harmony-overlay,
+.harmony-grain {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.harmony-video {
+    z-index: -5;
+    object-fit: cover;
+    opacity: 0;
+    transform: scale(1.04);
+    filter: saturate(0.88) contrast(0.96) brightness(0.84);
+    transition: opacity 900ms ease, transform 4500ms ease;
+}
+
+.video-ready .harmony-video {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.harmony-poster {
+    z-index: -6;
+    background:
+        radial-gradient(circle at 18% 18%, rgba(201, 252, 230, 0.32), transparent 26rem),
+        radial-gradient(circle at 78% 72%, rgba(139, 216, 198, 0.26), transparent 30rem),
+        linear-gradient(135deg, #0e2a27 0%, #1d3c35 42%, #071414 100%);
+}
+
+.harmony-overlay {
+    z-index: -4;
+    background:
+        linear-gradient(90deg, rgba(4, 14, 13, 0.74) 0%, rgba(4, 14, 13, 0.42) 45%, rgba(4, 14, 13, 0.62) 100%),
+        radial-gradient(circle at 45% 50%, rgba(190, 245, 224, 0.14), transparent 34rem),
+        linear-gradient(180deg, rgba(0, 0, 0, 0.18) 0%, rgba(0, 0, 0, 0.58) 100%);
+}
+
+.harmony-grain {
+    z-index: -3;
+    opacity: 0.2;
+    mix-blend-mode: soft-light;
+    background-image:
+        linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+    background-size: 54px 54px;
+    mask-image: linear-gradient(to bottom, transparent, black 18%, black 82%, transparent);
+}
+
+.harmony-nav {
+    position: absolute;
+    top: clamp(1rem, 2vw, 2rem);
+    left: clamp(1rem, 2vw, 2rem);
+    right: clamp(1rem, 2vw, 2rem);
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.harmony-brand,
+.harmony-nav-link {
+    color: var(--ink);
+    text-decoration: none;
+}
+
+.harmony-brand {
+    font-size: 0.96rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    padding: 0.75rem 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(18px);
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.2);
+}
+
+.harmony-nav-link {
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    padding: 0.75rem 1rem;
+    border-radius: 999px;
+    transition: background 180ms ease, color 180ms ease, transform 180ms ease;
+}
+
+.harmony-nav-link:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--ink);
+    transform: translateY(-1px);
+}
+
+.harmony-copy {
+    width: min(760px, 100%);
+    margin-left: clamp(0rem, 5vw, 5rem);
+    padding: clamp(5rem, 10vh, 8rem) 0 clamp(3rem, 6vh, 5rem);
+    animation: breatheIn 1000ms ease both;
+}
+
+.harmony-eyebrow {
+    width: fit-content;
+    margin: 0 0 1.1rem;
+    padding: 0.58rem 0.86rem;
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--sage);
+    backdrop-filter: blur(16px);
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+}
+
+.harmony-copy h1 {
+    max-width: 10ch;
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(4.7rem, 13vw, 11.8rem);
+    font-weight: 400;
+    line-height: 0.76;
+    letter-spacing: -0.075em;
+    text-wrap: balance;
+    text-shadow: 0 22px 65px rgba(0, 0, 0, 0.5);
+}
+
+.harmony-subtitle {
+    max-width: 42rem;
+    margin: clamp(1.5rem, 3vw, 2.4rem) 0 0;
+    color: var(--ink-soft);
+    font-size: clamp(1rem, 2vw, 1.22rem);
+    line-height: 1.75;
+    text-shadow: 0 8px 30px rgba(0, 0, 0, 0.34);
+}
+
+.harmony-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.85rem;
+    margin-top: clamp(1.7rem, 4vw, 2.8rem);
+}
+
+.harmony-cta {
+    min-height: 3.35rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: 999px;
+    padding: 0 1.25rem;
+    border: 1px solid var(--border);
+    font-family: var(--font-body);
+    font-size: 0.92rem;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    text-decoration: none;
+    cursor: pointer;
+    transition: transform 180ms ease, background 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.harmony-cta-primary {
+    background: rgba(244, 255, 250, 0.92);
+    color: #10231f;
+    box-shadow: 0 18px 48px rgba(0, 0, 0, 0.3), inset 0 1px rgba(255, 255, 255, 0.8);
+}
+
+.harmony-cta-ghost {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--ink);
+    backdrop-filter: blur(18px);
+}
+
+.harmony-cta:hover {
+    transform: translateY(-2px);
+    border-color: rgba(255, 255, 255, 0.42);
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.34);
+}
+
+.harmony-cta:focus-visible,
+.harmony-brand:focus-visible,
+.harmony-nav-link:focus-visible {
+    outline: 3px solid rgba(184, 243, 225, 0.7);
+    outline-offset: 4px;
+}
+
+.harmony-status {
+    position: absolute;
+    right: clamp(1rem, 2vw, 2rem);
+    bottom: clamp(1rem, 2vw, 2rem);
+    max-width: min(22rem, calc(100% - 2rem));
+    padding: 0.7rem 0.9rem;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.22);
+    color: var(--ink-muted);
+    font-size: 0.78rem;
+    backdrop-filter: blur(16px);
+}
+
+.video-ready .harmony-status {
+    opacity: 0;
+    transform: translateY(0.5rem);
+    pointer-events: none;
+    transition: opacity 320ms ease, transform 320ms ease;
+}
+
+.motion-paused .harmony-video {
+    opacity: 0.4;
+}
+
+@keyframes breatheIn {
+    from {
+        opacity: 0;
+        transform: translateY(1.25rem) scale(0.985);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@media (max-width: 760px) {
+    .harmony-hero {
+        align-items: end;
+        padding: 1rem;
+    }
+
+    .harmony-copy {
+        margin-left: 0;
+        padding: 6.5rem 0 5rem;
+    }
+
+    .harmony-copy h1 {
+        max-width: 8ch;
+        font-size: clamp(4.4rem, 22vw, 7.4rem);
+    }
+
+    .harmony-subtitle {
+        font-size: 1rem;
+        line-height: 1.62;
+    }
+
+    .harmony-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .harmony-cta {
+        width: 100%;
+    }
+
+    .harmony-status {
+        left: 1rem;
+        right: auto;
+        bottom: 1rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 1ms !important;
+        transition-duration: 1ms !important;
+        scroll-behavior: auto !important;
+    }
+
+    .harmony-video {
+        display: none;
+    }
+
+    .harmony-status {
+        display: none;
+    }
+}
