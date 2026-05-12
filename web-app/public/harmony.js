@@ -4,24 +4,37 @@ const status = document.querySelector('[data-video-status]');
 const toggle = document.querySelector('[data-motion-toggle]');
 
 const markVideoReady = () => {
+    page.classList.remove('video-fallback');
     page.classList.add('video-ready');
     if (status) status.textContent = 'Motion ready.';
 };
 
 const markVideoUnavailable = () => {
-    page.classList.add('video-ready');
+    if (page.classList.contains('video-ready')) return;
+    page.classList.add('video-fallback');
     if (status) status.textContent = 'Using calm fallback background.';
 };
 
 if (video) {
+    video.muted = true;
+    video.playsInline = true;
+
+    video.addEventListener('playing', markVideoReady, { once: true });
     video.addEventListener('canplay', markVideoReady, { once: true });
     video.addEventListener('loadeddata', markVideoReady, { once: true });
     video.addEventListener('error', markVideoUnavailable, { once: true });
+    video.querySelectorAll('source').forEach((source) => {
+        source.addEventListener('error', markVideoUnavailable, { once: true });
+    });
 
     const startPlayback = () => {
-        video.play().catch(() => {
-            if (status) status.textContent = 'Tap to begin soft motion.';
-        });
+        video.load();
+        const playback = video.play();
+        if (playback && typeof playback.catch === 'function') {
+            playback.catch(() => {
+                if (status) status.textContent = 'Tap resume motion to begin video.';
+            });
+        }
     };
 
     if (document.readyState === 'complete') {
@@ -34,7 +47,7 @@ if (video) {
         if (!page.classList.contains('video-ready')) {
             markVideoUnavailable();
         }
-    }, 5000);
+    }, 8000);
 }
 
 if (toggle && video) {
@@ -46,9 +59,12 @@ if (toggle && video) {
         if (paused) {
             video.pause();
         } else {
-            video.play().catch(() => {
-                if (status) status.textContent = 'Motion is waiting for browser permission.';
-            });
+            const playback = video.play();
+            if (playback && typeof playback.catch === 'function') {
+                playback.catch(() => {
+                    if (status) status.textContent = 'Motion is waiting for browser permission.';
+                });
+            }
         }
     });
 }
