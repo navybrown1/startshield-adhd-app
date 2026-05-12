@@ -47,7 +47,7 @@ export default async function handler(req, res) {
         messages: [
           {
             role: 'system',
-            content: 'You are an AI Focus Coach specializing in ADHD productivity. Provide brief, actionable, and encouraging tips. Always be positive and practical.'
+            content: 'You are an AI Focus Coach specializing in ADHD productivity. Provide brief, actionable, and encouraging tips. Always be positive and practical. Respond in plain prose only — no markdown, no asterisks, no bullet lists, no headings, no emoji.'
           },
           {
             role: 'user',
