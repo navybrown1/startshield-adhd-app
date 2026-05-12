@@ -78,15 +78,19 @@ body {
 .harmony-video {
     z-index: -5;
     object-fit: cover;
-    opacity: 0;
-    transform: scale(1.04);
-    filter: saturate(0.88) contrast(0.96) brightness(0.84);
+    opacity: 0.88;
+    transform: scale(1.02);
+    filter: saturate(0.88) contrast(0.96) brightness(0.78);
     transition: opacity 900ms ease, transform 4500ms ease;
 }
 
 .video-ready .harmony-video {
-    opacity: 1;
+    opacity: 0.92;
     transform: scale(1);
+}
+
+.video-fallback .harmony-video {
+    opacity: 0;
 }
 
 .harmony-poster {
@@ -100,9 +104,9 @@ body {
 .harmony-overlay {
     z-index: -4;
     background:
-        linear-gradient(90deg, rgba(4, 14, 13, 0.74) 0%, rgba(4, 14, 13, 0.42) 45%, rgba(4, 14, 13, 0.62) 100%),
+        linear-gradient(90deg, rgba(4, 14, 13, 0.6) 0%, rgba(4, 14, 13, 0.32) 45%, rgba(4, 14, 13, 0.56) 100%),
         radial-gradient(circle at 45% 50%, rgba(190, 245, 224, 0.14), transparent 34rem),
-        linear-gradient(180deg, rgba(0, 0, 0, 0.18) 0%, rgba(0, 0, 0, 0.58) 100%);
+        linear-gradient(180deg, rgba(0, 0, 0, 0.12) 0%, rgba(0, 0, 0, 0.5) 100%);
 }
 
 .harmony-grain {
@@ -186,13 +190,14 @@ body {
 }
 
 .harmony-copy h1 {
-    max-width: 10ch;
+    max-width: 11ch;
     margin: 0;
     font-family: var(--font-display);
-    font-size: clamp(4.7rem, 13vw, 11.8rem);
+    font-size: clamp(4.7rem, 12vw, 10.4rem);
     font-weight: 400;
-    line-height: 0.76;
-    letter-spacing: -0.075em;
+    line-height: 0.84;
+    letter-spacing: -0.045em;
+    word-spacing: 0.02em;
     text-wrap: balance;
     text-shadow: 0 22px 65px rgba(0, 0, 0, 0.5);
 }
@@ -278,7 +283,7 @@ body {
 }
 
 .motion-paused .harmony-video {
-    opacity: 0.4;
+    opacity: 0.35;
 }
 
 @keyframes breatheIn {
@@ -306,6 +311,8 @@ body {
     .harmony-copy h1 {
         max-width: 8ch;
         font-size: clamp(4.4rem, 22vw, 7.4rem);
+        line-height: 0.86;
+        letter-spacing: -0.035em;
     }
 
     .harmony-subtitle {
