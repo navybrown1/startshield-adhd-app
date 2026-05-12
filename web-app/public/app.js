@@ -76,11 +76,19 @@ const focusTaskOverlay = document.getElementById('focus-task-overlay');
 const toastElement = document.getElementById('app-toast');
 const onboardingCard = document.getElementById('onboarding-card');
 const dismissOnboardingBtn = document.getElementById('dismiss-onboarding');
+const timerSubLabel = document.getElementById('timer-sub-label');
+const timerAnnouncer = document.getElementById('timer-announcer');
 
 sessionCountDisplay.textContent = sessionCount;
 updateQuickStats();
 loadTheme();
 loadAmbientSound();
+
+function announce(message) {
+    if (!timerAnnouncer || !message) return;
+    timerAnnouncer.textContent = '';
+    requestAnimationFrame(() => { timerAnnouncer.textContent = message; });
+}
 
 function showToast(message, duration = DEFAULT_TOAST_DURATION) {
     if (!toastElement || !message) return;
@@ -100,12 +108,12 @@ function saveTask(task, options = {}) {
     const trimmedTask = (task || '').trim();
     if (!trimmedTask) return false;
     if (!setStorageValue('currentTask', trimmedTask)) return false;
-    activeTaskDisplay.textContent = `Current Focus: ${trimmedTask}`;
+    if (activeTaskDisplay) activeTaskDisplay.textContent = trimmedTask;
     if (focusTaskOverlay) {
         focusTaskOverlay.textContent = trimmedTask;
         focusTaskOverlay.classList.remove('hidden');
     }
-    if (!options.silent) showToast('Task saved on this device.');
+    if (!options.silent) showToast('Task saved.');
     return true;
 }
 
@@ -113,6 +121,10 @@ function updateDisplay() {
     const minutes = Math.floor(timeLeft / 60);
     const seconds = timeLeft % 60;
     timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    if (timerSubLabel) {
+        const totalMins = Math.round(totalTime / 60);
+        timerSubLabel.textContent = `of ${totalMins} minute${totalMins !== 1 ? 's' : ''}`;
+    }
     updateProgress();
 }
 
@@ -265,8 +277,8 @@ function createTextElement(tagName, className, text) {
 }
 
 function updateQuickStats() {
-    quickStreak.textContent = currentStreak;
-    quickLevel.textContent = userLevel;
+    if (quickStreak) quickStreak.textContent = currentStreak;
+    if (quickLevel) quickLevel.textContent = userLevel;
 }
 
 function switchMode() {
@@ -274,7 +286,7 @@ function switchMode() {
     resetTimer();
     timerDisplay.classList.toggle('break-mode', isBreak);
     document.querySelector('.timer-wrapper').classList.toggle('break-mode', isBreak);
-    modeLabel.parentElement.classList.toggle('break-mode', isBreak);
+    document.querySelector('.ring-column')?.classList.toggle('break-mode', isBreak);
     updateModeUI();
 
     if (isBreak) {
@@ -314,10 +326,13 @@ function startTimer() {
         return;
     }
 
+    announce(isBreak ? 'Break started.' : 'Focus session started.');
+
     timer = setInterval(() => {
         if (timeLeft > 0) {
             timeLeft -= 1;
             updateDisplay();
+            if (timeLeft === 300) announce('5 minutes remaining.');
             return;
         }
 
@@ -327,12 +342,14 @@ function startTimer() {
         playNotificationSound();
 
         if (isBreak) {
-            sendDesktopNotification('Break Over!', 'Time to get back to focus.');
+            announce('Break complete. Ready to focus?');
+            sendDesktopNotification('Break over', 'Time to get back to focus.');
             switchMode();
             return;
         }
 
-        sendDesktopNotification('Focus Complete!', 'Great job! Time for a break.');
+        announce('Focus session complete. Nice work!');
+        sendDesktopNotification('Session complete', 'Great work! Time for a break.');
         sessionCount += 1;
         setStorageValue('sessionCount', sessionCount);
         sessionCountDisplay.textContent = sessionCount;
@@ -409,7 +426,7 @@ taskInput.addEventListener('blur', () => {
 
 const savedTask = getStorageValue('currentTask', '');
 if (savedTask) {
-    activeTaskDisplay.textContent = `Current Focus: ${savedTask}`;
+    if (activeTaskDisplay) activeTaskDisplay.textContent = savedTask;
     if (focusTaskOverlay) {
         focusTaskOverlay.textContent = savedTask;
         focusTaskOverlay.classList.remove('hidden');
@@ -612,15 +629,14 @@ function handleChatKey(event) {
 }
 
 function renderSuggestionBox(text, buttonText) {
-    const suggestionBox = document.getElementById('ai-suggestion');
-    suggestionBox.replaceChildren();
-    suggestionBox.appendChild(createTextElement('p', '', text));
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.className = 'ask-ai-btn';
-    button.textContent = buttonText;
-    button.addEventListener('click', getAiSuggestion);
-    suggestionBox.appendChild(button);
+    const textEl = document.getElementById('ai-suggestion-text');
+    const btn = document.getElementById('ai-tip-btn');
+    if (textEl) textEl.textContent = text;
+    if (btn) {
+        const svg = btn.querySelector('svg');
+        btn.textContent = buttonText;
+        if (svg) btn.prepend(svg);
+    }
 }
 
 async function getAiSuggestion() {

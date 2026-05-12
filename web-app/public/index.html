@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self' https://api.mistral.ai; media-src https://cdn.pixabay.com;">
-    <title>StartShield - AI Focus Guardian</title>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com; font-src https://fonts.gstatic.com; script-src 'self' 'unsafe-inline'; connect-src 'self' https://api.mistral.ai; media-src https://cdn.pixabay.com;">
+    <title>StartShield — Focus</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@500;600&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -12,8 +12,8 @@
 </head>
 <body>
     <div class="title-bar-drag-area"></div>
-    
-    <!-- Settings Modal -->
+
+    <!-- ── Settings Modal ─────────────────────────────────── -->
     <div id="settings-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="settings-modal-title" aria-hidden="true">
         <div class="modal-content" tabindex="-1">
             <div class="modal-header">
@@ -23,45 +23,48 @@
             <div class="modal-body">
                 <div class="setting-group">
                     <label for="api-key-input">Mistral API Key</label>
-                    <input type="password" id="api-key-input" placeholder="Enter your Mistral API key">
-                    <button type="button" class="save-btn" onclick="saveApiKey()">Save API Key</button>
-                    <p class="setting-hint">In web mode, this key is available only for the current page session and is not saved in browser storage.</p>
+                    <input type="password" id="api-key-input" placeholder="Enter your Mistral API key" autocomplete="off">
+                    <button type="button" class="save-btn" onclick="saveApiKey()">Save key</button>
+                    <p class="setting-hint">Your key is only held in memory for this session — it is never written to storage.</p>
                 </div>
-                
+
                 <div class="setting-group">
-                    <label for="theme-select">Theme</label>
+                    <label for="theme-select">Appearance</label>
                     <select id="theme-select" onchange="changeTheme(this.value)">
                         <option value="light">Light</option>
                         <option value="dark">Dark</option>
                     </select>
                 </div>
-                
+
                 <div class="setting-group">
-                    <label for="ambient-sound">Ambient Sound</label>
+                    <label for="ambient-sound">Ambient sound</label>
                     <select id="ambient-sound" onchange="changeAmbientSound(this.value)">
                         <option value="none">Silence</option>
-                        <option value="rain">🌧️ Rain</option>
-                        <option value="cafe">☕ Café</option>
-                        <option value="white-noise">📻 White Noise</option>
-                        <option value="forest">🌳 Forest</option>
+                        <option value="rain">Rain</option>
+                        <option value="cafe">Café</option>
+                        <option value="white-noise">White noise</option>
+                        <option value="forest">Forest</option>
                     </select>
-                    <input type="range" id="ambient-volume" min="0" max="100" value="50" onchange="changeVolume(this.value)">
-                    <span id="volume-display">50%</span>
+                    <div class="volume-row">
+                        <input type="range" id="ambient-volume" min="0" max="100" value="50"
+                               aria-label="Volume" onchange="changeVolume(this.value)">
+                        <span id="volume-display" class="volume-label">50%</span>
+                    </div>
                 </div>
-                
+
                 <div class="setting-group">
-                    <label>Notifications</label>
-                    <label class="toggle-label">
+                    <label id="notif-label">Notifications</label>
+                    <label class="toggle-label" aria-labelledby="notif-label">
                         <input type="checkbox" id="notifications-toggle" checked>
-                        Enable Notifications
+                        Enable session notifications
                     </label>
                 </div>
-                <p class="setting-hint">Theme, sound, and notification preferences save automatically.</p>
+                <p class="setting-hint">Preferences save automatically.</p>
             </div>
         </div>
     </div>
-    
-    <!-- AI Coach Modal -->
+
+    <!-- ── AI Coach Modal ─────────────────────────────────── -->
     <div id="ai-coach-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="ai-modal-title" aria-hidden="true">
         <div class="modal-content ai-coach-content" tabindex="-1">
             <div class="modal-header">
@@ -69,165 +72,201 @@
                 <button type="button" class="close-btn" aria-label="Close AI coach" onclick="closeModal('ai-coach-modal')">&times;</button>
             </div>
             <div class="modal-body ai-chat-body">
-                <div id="chat-messages" class="chat-messages" aria-live="polite">
+                <div id="chat-messages" class="chat-messages" aria-live="polite" aria-label="Chat history">
                     <div class="message ai-message">
-                        <p>Hey! I'm your AI Focus Coach. I'm here to help you stay productive and motivated. How can I help you today?</p>
+                        <p>Hey! I'm your AI Focus Coach. What's on your mind?</p>
                     </div>
                 </div>
                 <div class="chat-input-container">
-                    <input type="text" id="chat-input" placeholder="Ask me anything about focus..." aria-label="Message AI coach" onkeypress="handleChatKey(event)">
+                    <input type="text" id="chat-input" placeholder="Ask me anything about focus…" aria-label="Message to AI coach" onkeypress="handleChatKey(event)">
                     <button type="button" onclick="sendChatMessage()" id="send-btn">Send</button>
                 </div>
             </div>
         </div>
     </div>
-    
-    <!-- Stats Modal -->
+
+    <!-- ── Progress Modal ─────────────────────────────────── -->
     <div id="stats-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="stats-modal-title" aria-hidden="true">
         <div class="modal-content" tabindex="-1">
             <div class="modal-header">
-                <h2 id="stats-modal-title">Your Progress</h2>
-                <button type="button" class="close-btn" aria-label="Close progress modal" onclick="closeModal('stats-modal')">&times;</button>
+                <h2 id="stats-modal-title">Your progress</h2>
+                <button type="button" class="close-btn" aria-label="Close progress" onclick="closeModal('stats-modal')">&times;</button>
             </div>
             <div class="modal-body stats-body">
                 <div class="stats-grid">
                     <div class="stat-card">
-                        <div class="stat-icon">🔥</div>
                         <div class="stat-value" id="streak-display">0</div>
-                        <div class="stat-label">Day Streak</div>
+                        <div class="stat-label">Day streak</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-icon">⭐</div>
                         <div class="stat-value" id="level-display">1</div>
                         <div class="stat-label">Level</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-icon">💫</div>
                         <div class="stat-value" id="xp-display">0</div>
-                        <div class="stat-label">XP Points</div>
+                        <div class="stat-label">XP points</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-icon">✅</div>
                         <div class="stat-value" id="total-sessions-display">0</div>
                         <div class="stat-label">Sessions</div>
                     </div>
                 </div>
-                
+
                 <div class="badges-section">
                     <h3>Badges earned</h3>
                     <div id="badges-container" class="badges-container">
-                        <p class="no-badges">Complete sessions to earn badges!</p>
+                        <p class="no-badges">Complete sessions to earn badges.</p>
                     </div>
                 </div>
-                
+
                 <div class="progress-section">
-                    <h3>Next Level Progress</h3>
+                    <h3>Next level</h3>
                     <div class="progress-bar-container">
                         <div id="level-progress" class="progress-bar"></div>
                     </div>
-                    <p id="level-progress-text">0/500 XP to next level</p>
+                    <p id="level-progress-text">0 / 500 XP</p>
                 </div>
             </div>
         </div>
     </div>
-    
-    <div class="container" role="main">
-        <header>
-            <div class="header-top">
-                <div class="header-wordmark">
-                    <h1>StartShield</h1>
-                    <p class="header-eyebrow">Focus</p>
-                </div>
-                <div class="header-actions">
-                    <button type="button" class="icon-btn" aria-label="View progress" aria-haspopup="dialog" aria-controls="stats-modal" onclick="openModal('stats-modal')" title="Progress">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
-                    </button>
-                    <button type="button" class="icon-btn" aria-label="Open settings" aria-haspopup="dialog" aria-controls="settings-modal" onclick="openModal('settings-modal')" title="Settings">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-                    </button>
-                </div>
+
+    <!-- ════════════════════════════════════════════════════
+         MAIN LAYOUT
+         ════════════════════════════════════════════════════ -->
+    <div class="app-shell" role="main">
+
+        <!-- Top bar -->
+        <header class="topbar">
+            <div class="topbar-brand">
+                <span class="topbar-wordmark">StartShield</span>
+                <span class="topbar-eyebrow">Focus</span>
             </div>
-            <div id="onboarding-card" class="onboarding-card hidden" role="note">
-                <p>Add a task below, then press <em>Let's focus</em> to start. Open settings to save your AI key.</p>
-                <button type="button" id="dismiss-onboarding" class="btn-quiet">Got it</button>
-            </div>
-            <div class="quick-stats">
-                <span class="quick-stat"><span id="quick-streak">0</span>-day streak</span>
-                <span class="quick-stat">Level <span id="quick-level">1</span></span>
+            <div class="topbar-actions">
+                <span class="streak-chip" aria-label="Current streak">
+                    <span id="quick-streak">0</span>-day streak
+                </span>
+                <button type="button" class="icon-btn" aria-label="View progress" aria-haspopup="dialog" aria-controls="stats-modal" onclick="openModal('stats-modal')">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+                </button>
+                <button type="button" class="icon-btn" aria-label="Open settings" aria-haspopup="dialog" aria-controls="settings-modal" onclick="openModal('settings-modal')">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                </button>
             </div>
         </header>
-        
-        <section id="timer-section">
-            <div class="timer-wrapper">
-                <svg id="progress-ring" class="progress-ring" viewBox="0 0 100 100">
-                    <circle class="progress-ring-circle-bg" cx="50" cy="50" r="45"/>
-                    <circle class="progress-circle" cx="50" cy="50" r="45"/>
-                </svg>
-                <div id="timer-display" role="timer" aria-live="polite" aria-atomic="true">25:00</div>
-                <div id="focus-task-overlay" class="focus-task-overlay hidden"></div>
-            </div>
-            
-            <div class="mode-indicator">
-                <span id="mode-label">Focus Mode</span>
-            </div>
-            
-            <div class="controls">
-                <button type="button" id="start-btn">Let's focus</button>
-                <button type="button" id="reset-btn">Reset</button>
-            </div>
 
-            <div class="mode-toggle-wrapper">
-                <button type="button" id="mode-toggle" class="btn-quiet">Take a break</button>
-            </div>
-        </section>
-        
-        <div class="bottom-sections">
-            <section id="task-section">
-                <h3 class="section-header">One thing at a time</h3>
-                <div class="task-input-wrapper">
-                    <input type="text" id="task-input" placeholder="What's the very next step?" aria-label="Current focus task">
-                    <button type="button" id="set-task-btn">Set</button>
-                </div>
-                <p id="active-task-display" aria-live="polite"></p>
-            </section>
-
-            <section id="duration-section">
-                <h3 class="section-header">Session length</h3>
-                <div class="preset-group">
-                    <button type="button" class="preset-btn" data-minutes="15">15 min</button>
-                    <button type="button" class="preset-btn active" data-minutes="25">25 min</button>
-                    <button type="button" class="preset-btn" data-minutes="50">50 min</button>
-                    <button type="button" class="preset-btn" data-minutes="90">90 min</button>
-                </div>
-            </section>
-
-            <section id="ai-suggestion-section">
-                <h3 class="section-header">Feeling stuck?</h3>
-                <div id="ai-suggestion" class="ai-suggestion-box">
-                    <p>Let the coach break this down into smaller steps.</p>
-                    <button type="button" class="ask-ai-btn" onclick="getAiSuggestion()">Get a tip</button>
-                </div>
-            </section>
-
-            <section id="stats-section">
-                <span class="stats-label">Sessions Completed</span>
-                <span id="session-count" class="stats-value">0</span>
-            </section>
+        <!-- Session eyebrow + headline -->
+        <div class="focus-hero">
+            <p class="session-eyebrow">Today's session</p>
+            <h2 class="focus-headline">
+                Let's focus on <em>one thing</em>.
+            </h2>
         </div>
-    </div>
-    
-    <!-- Badge Notification -->
-    <div id="badge-notification" class="badge-notification hidden">
+
+        <!-- Onboarding hint -->
+        <div id="onboarding-card" class="onboarding-card hidden" role="note">
+            <p>Add a task below, then press <em>Let's focus</em> to start. Open settings to save your AI key.</p>
+            <button type="button" id="dismiss-onboarding" class="btn-quiet">Got it</button>
+        </div>
+
+        <!-- ── Focus canvas (ring + controls) ── -->
+        <div class="focus-canvas">
+
+            <!-- Timer ring -->
+            <div class="ring-column">
+                <div class="timer-wrapper" aria-label="Timer">
+                    <svg id="progress-ring" class="progress-ring" viewBox="0 0 100 100" aria-hidden="true">
+                        <circle class="progress-ring-circle-bg" cx="50" cy="50" r="45"/>
+                        <circle class="progress-circle" cx="50" cy="50" r="45"/>
+                    </svg>
+                    <div class="timer-center">
+                        <div id="timer-display" role="timer" aria-live="polite" aria-atomic="true" aria-label="Time remaining">25:00</div>
+                        <div class="timer-sub" id="timer-sub-label">of 25 minutes</div>
+                    </div>
+                    <div id="focus-task-overlay" class="focus-task-overlay hidden" aria-live="polite"></div>
+                </div>
+
+                <!-- Mode label (below ring, centered) -->
+                <div class="mode-indicator" aria-live="polite">
+                    <span id="mode-label">Focus session</span>
+                </div>
+            </div>
+
+            <!-- Controls column -->
+            <div class="controls-column">
+
+                <!-- CTA row -->
+                <div class="cta-row">
+                    <button type="button" id="start-btn" class="btn-start">
+                        Let's focus
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                    </button>
+                    <button type="button" id="reset-btn" class="btn-quiet end-early-btn">End early</button>
+                </div>
+
+                <!-- Duration chips -->
+                <div class="duration-block">
+                    <p class="block-eyebrow">Session length</p>
+                    <div class="preset-group" id="duration-chips" role="group" aria-label="Select session length">
+                        <button type="button" class="preset-btn" data-minutes="15">15 min</button>
+                        <button type="button" class="preset-btn active" data-minutes="25">25 min</button>
+                        <button type="button" class="preset-btn" data-minutes="50">50 min</button>
+                        <button type="button" class="preset-btn" data-minutes="90">90 min</button>
+                    </div>
+                </div>
+
+                <!-- One-thing card -->
+                <div class="one-thing-card card" id="one-thing-card">
+                    <p class="block-eyebrow">One thing at a time</p>
+                    <div class="task-input-wrapper" id="task-input-row">
+                        <input type="text" id="task-input" placeholder="What's the very next step?" aria-label="Current focus task" autocomplete="off">
+                        <button type="button" id="set-task-btn" class="btn-set">Set</button>
+                    </div>
+                    <p id="active-task-display" class="active-task-display" aria-live="polite"></p>
+                </div>
+
+                <!-- AI coach card -->
+                <div class="ai-coach-card card-tint">
+                    <p class="block-eyebrow">Feeling stuck?</p>
+                    <p class="ai-coach-body" id="ai-suggestion-text">Let the coach break this down into smaller steps.</p>
+                    <button type="button" class="btn-ai-tip" onclick="getAiSuggestion()" id="ai-tip-btn">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+                        Get a tip
+                    </button>
+                </div>
+
+                <!-- Break mode toggle -->
+                <div class="mode-toggle-wrapper">
+                    <button type="button" id="mode-toggle" class="btn-quiet">Take a break</button>
+                </div>
+
+            </div><!-- /controls-column -->
+        </div><!-- /focus-canvas -->
+
+        <!-- Sessions count (bottom strip) -->
+        <div class="sessions-strip">
+            <span class="stats-label">Sessions completed</span>
+            <span id="session-count" class="stats-value">0</span>
+        </div>
+
+    </div><!-- /app-shell -->
+
+    <!-- Badge notification -->
+    <div id="badge-notification" class="badge-notification hidden" role="alert" aria-live="assertive">
         <div class="badge-content">
-            <span class="badge-icon">🏆</span>
+            <span class="badge-icon" aria-hidden="true">🏆</span>
             <div>
-                <h4>New Badge Unlocked!</h4>
+                <h4>New badge unlocked!</h4>
                 <p id="badge-name">First Session</p>
             </div>
         </div>
     </div>
+
+    <!-- Toast -->
     <div id="app-toast" class="app-toast hidden" role="status" aria-live="polite" aria-atomic="true"></div>
-    
+
+    <!-- ARIA live region for timer announcements -->
+    <div id="timer-announcer" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+
     <script src="app.js"></script>
 </body>
 </html>
