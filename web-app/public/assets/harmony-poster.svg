@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" role="img" aria-label="Soft green blue calm ocean inspired gradient">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#173b37"/>
+      <stop offset="0.48" stop-color="#2f665c"/>
+      <stop offset="1" stop-color="#071414"/>
+    </linearGradient>
+    <radialGradient id="light" cx="22%" cy="22%" r="62%">
+      <stop offset="0" stop-color="#c9fce6" stop-opacity=".48"/>
+      <stop offset=".52" stop-color="#75c8b1" stop-opacity=".18"/>
+      <stop offset="1" stop-color="#071414" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glow" cx="78%" cy="76%" r="54%">
+      <stop offset="0" stop-color="#9adccd" stop-opacity=".34"/>
+      <stop offset=".68" stop-color="#1a3d38" stop-opacity=".12"/>
+      <stop offset="1" stop-color="#071414" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="blur">
+      <feGaussianBlur stdDeviation="18"/>
+    </filter>
+  </defs>
+  <rect width="1600" height="1000" fill="url(#sky)"/>
+  <rect width="1600" height="1000" fill="url(#light)"/>
+  <rect width="1600" height="1000" fill="url(#glow)"/>
+  <g opacity=".32" filter="url(#blur)">
+    <path d="M-80 690 C180 630 320 760 560 705 C800 650 940 568 1160 640 C1340 700 1470 720 1680 645 L1680 1000 L-80 1000 Z" fill="#a8ead7"/>
+    <path d="M-80 755 C150 705 340 805 570 745 C760 695 980 685 1175 760 C1360 830 1510 790 1680 735 L1680 1000 L-80 1000 Z" fill="#345f5b"/>
+  </g>
+  <rect width="1600" height="1000" fill="#020807" opacity=".28"/>
+</svg>

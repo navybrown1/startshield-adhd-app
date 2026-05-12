@@ -1,0 +1,57 @@
+.harmony-chip {
+    min-height: 42px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    padding: 0 0.95rem;
+    border-radius: var(--r-pill, 999px);
+    border: 1px solid rgba(95, 130, 104, 0.28);
+    background: linear-gradient(135deg, rgba(217, 234, 216, 0.9), rgba(236, 241, 233, 0.72));
+    color: var(--sage-deep, #3E5C46);
+    font-size: 0.82rem;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    text-decoration: none;
+    box-shadow: 0 8px 22px rgba(40, 30, 14, 0.08);
+    transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease;
+}
+
+.harmony-chip::before {
+    content: "~";
+    font-family: var(--serif, Georgia, serif);
+    font-size: 1.25rem;
+    font-weight: 400;
+    line-height: 0;
+}
+
+.harmony-chip:hover {
+    transform: translateY(-1px);
+    border-color: rgba(95, 130, 104, 0.44);
+    box-shadow: 0 12px 28px rgba(40, 30, 14, 0.12);
+}
+
+.harmony-chip:focus-visible {
+    outline: none;
+    box-shadow: var(--shadow-focus, 0 0 0 4px rgba(95, 130, 104, 0.18));
+}
+
+[data-theme="dark"] .harmony-chip {
+    background: linear-gradient(135deg, rgba(138, 174, 146, 0.18), rgba(196, 214, 199, 0.08));
+    color: var(--sage-ink, #C4D6C7);
+    border-color: rgba(196, 214, 199, 0.22);
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.24);
+}
+
+@media (max-width: 720px) {
+    .topbar-actions {
+        flex-wrap: wrap;
+        justify-content: flex-end;
+    }
+
+    .harmony-chip {
+        order: -1;
+        min-height: 38px;
+        width: 100%;
+    }
+}
